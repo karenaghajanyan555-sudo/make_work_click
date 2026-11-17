@@ -1,0 +1,311 @@
+{
+  "sampleRate": 24000,
+  "voice": {
+    "mix": [
+      [
+        "af_bella",
+        0.6
+      ],
+      [
+        "af_nicole",
+        0.4
+      ]
+    ]
+  },
+  "speed": 1,
+  "seed": 7,
+  "engine": {
+    "kokoro": "0.9.4",
+    "misaki": "0.9.4",
+    "torch": "2.14.1+cpu",
+    "modelRevision": "f3ff3571791e39611d31c381e3a41a3af07b4987"
+  },
+  "takeDuration": 17.3,
+  "lines": [
+    {
+      "id": "hook",
+      "text": "Your business shouldn't depend on your memory.",
+      "file": "hook.wav",
+      "duration": 2.707,
+      "sourceStart": 0.24,
+      "words": [
+        {
+          "text": "Your",
+          "start": 0.06,
+          "end": 0.185
+        },
+        {
+          "text": "business",
+          "start": 0.185,
+          "end": 0.647
+        },
+        {
+          "text": "shouldn't",
+          "start": 0.647,
+          "end": 0.885
+        },
+        {
+          "text": "depend",
+          "start": 0.885,
+          "end": 1.298
+        },
+        {
+          "text": "on",
+          "start": 1.298,
+          "end": 1.397
+        },
+        {
+          "text": "your",
+          "start": 1.397,
+          "end": 1.51
+        },
+        {
+          "text": "memory",
+          "start": 1.51,
+          "end": 2.535
+        }
+      ]
+    },
+    {
+      "id": "system",
+      "text": "Let the system remember.",
+      "file": "system.wav",
+      "duration": 1.782,
+      "sourceStart": 2.965,
+      "words": [
+        {
+          "text": "Let",
+          "start": 0.06,
+          "end": 0.285
+        },
+        {
+          "text": "the",
+          "start": 0.285,
+          "end": 0.423
+        },
+        {
+          "text": "system",
+          "start": 0.423,
+          "end": 0.885
+        },
+        {
+          "text": "remember",
+          "start": 0.885,
+          "end": 1.66
+        }
+      ]
+    },
+    {
+      "id": "welcome",
+      "text": "You're busy. The welcome goes out anyway.",
+      "file": "welcome.wav",
+      "duration": 3.356,
+      "sourceStart": 4.747,
+      "words": [
+        {
+          "text": "You're",
+          "start": 0.015,
+          "end": 0.178
+        },
+        {
+          "text": "busy",
+          "start": 0.178,
+          "end": 1.003
+        },
+        {
+          "text": "The",
+          "start": 1.215,
+          "end": 1.365
+        },
+        {
+          "text": "welcome",
+          "start": 1.365,
+          "end": 1.828
+        },
+        {
+          "text": "goes",
+          "start": 1.828,
+          "end": 2.128
+        },
+        {
+          "text": "out",
+          "start": 2.128,
+          "end": 2.353
+        },
+        {
+          "text": "anyway",
+          "start": 2.353,
+          "end": 3.153
+        }
+      ]
+    },
+    {
+      "id": "followup",
+      "text": "Three days later, the follow-up sends itself.",
+      "file": "followup.wav",
+      "duration": 3.09,
+      "sourceStart": 8.103,
+      "words": [
+        {
+          "text": "Three",
+          "start": 0.01,
+          "end": 0.297
+        },
+        {
+          "text": "days",
+          "start": 0.297,
+          "end": 0.547
+        },
+        {
+          "text": "later",
+          "start": 0.547,
+          "end": 0.947
+        },
+        {
+          "text": "the",
+          "start": 1.022,
+          "end": 1.16
+        },
+        {
+          "text": "follow-up",
+          "start": 1.16,
+          "end": 1.76
+        },
+        {
+          "text": "sends",
+          "start": 1.76,
+          "end": 2.097
+        },
+        {
+          "text": "itself",
+          "start": 2.097,
+          "end": 2.997
+        }
+      ]
+    },
+    {
+      "id": "back",
+      "text": "And they come back.",
+      "file": "back.wav",
+      "duration": 1.354,
+      "sourceStart": 11.193,
+      "words": [
+        {
+          "text": "And",
+          "start": 0.007,
+          "end": 0.144
+        },
+        {
+          "text": "they",
+          "start": 0.144,
+          "end": 0.282
+        },
+        {
+          "text": "come",
+          "start": 0.282,
+          "end": 0.532
+        },
+        {
+          "text": "back",
+          "start": 0.532,
+          "end": 1.232
+        }
+      ]
+    },
+    {
+      "id": "payoff",
+      "text": "You didn't have to remember a thing.",
+      "file": "payoff.wav",
+      "duration": 2.073,
+      "sourceStart": 12.547,
+      "words": [
+        {
+          "text": "You",
+          "start": 0.015,
+          "end": 0.153
+        },
+        {
+          "text": "didn't",
+          "start": 0.153,
+          "end": 0.378
+        },
+        {
+          "text": "have",
+          "start": 0.378,
+          "end": 0.628
+        },
+        {
+          "text": "to",
+          "start": 0.628,
+          "end": 0.715
+        },
+        {
+          "text": "remember",
+          "start": 0.715,
+          "end": 1.053
+        },
+        {
+          "text": "a",
+          "start": 1.053,
+          "end": 1.165
+        },
+        {
+          "text": "thing",
+          "start": 1.165,
+          "end": 1.853
+        }
+      ]
+    },
+    {
+      "id": "cta",
+      "text": "Follow for more systems like this.",
+      "file": "cta.wav",
+      "duration": 2.622,
+      "sourceStart": 14.623,
+      "words": [
+        {
+          "text": "Follow",
+          "start": 0.014,
+          "end": 0.452
+        },
+        {
+          "text": "for",
+          "start": 0.452,
+          "end": 0.602
+        },
+        {
+          "text": "more",
+          "start": 0.602,
+          "end": 0.839
+        },
+        {
+          "text": "systems",
+          "start": 0.839,
+          "end": 1.402
+        },
+        {
+          "text": "like",
+          "start": 1.402,
+          "end": 1.627
+        },
+        {
+          "text": "this",
+          "start": 1.627,
+          "end": 2.402
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "f0MedianHz": 183.2,
+    "f0P10Hz": 160.0,
+    "f0P90Hz": 218.2,
+    "spectralCentroidHz": 2956.0,
+    "wordsPerSecondSpeaking": 2.73,
+    "peak": 0.625
+  },
+  "timing": {
+    "loadSeconds": 5.21,
+    "synthSeconds": 10.89
+  }
+}

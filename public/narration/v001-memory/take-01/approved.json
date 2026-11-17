@@ -1,0 +1,39 @@
+{
+  "video": "v001-memory",
+  "take": "take-01",
+  "approvedOn": "2026-11-16",
+  "source": "audition G-bella-nicole",
+  "rule": "Immutable. Never overwrite or re-synthesise; improvements go to a new take directory.",
+  "voice": {
+    "mix": [
+      [
+        "af_bella",
+        0.6
+      ],
+      [
+        "af_nicole",
+        0.4
+      ]
+    ]
+  },
+  "speed": 1,
+  "seed": 7,
+  "engine": {
+    "kokoro": "0.9.4",
+    "misaki": "0.9.4",
+    "torch": "2.14.1+cpu",
+    "modelRevision": "f3ff3571791e39611d31c381e3a41a3af07b4987"
+  },
+  "files": {
+    "take.json": "33821def0e7f681e3d4b89dc75decc68e0229c66f099759bf1a056b045f5bfca",
+    "take.wav": "1060074d4b1649770854e765f403e1e812e66071ed0453fecaf045178b58dca9",
+    "hook.wav": "53d1272294b4335f034d16d0ec5c0e75ebc1a45d41bac8b89da5009b5054703a",
+    "system.wav": "ff6933783466d4b00a3784f1ebe863c026802f88e4b1bc9cb9aa97d349c625b2",
+    "welcome.wav": "93d8177a345ff9137822754b17fd7556af621e5047ee971de1fa722e1bf023da",
+    "followup.wav": "e61aa986c0b4e2482285cae1864fe82e3b4002caec15ec6a0a632af65a49a354",
+    "back.wav": "8254444475345ab518a77bcd1fdbe48b55fbd09972c472b5114f90a43a948ea8",
+    "payoff.wav": "01824b7daa3a695f806a0f88ce0303fbf4da8f13a13c710ff153591ed3e9cf5c",
+    "cta.wav": "de6c097df3582a30e08430688d2c75f626c1a23aeb6c652b9b44509901ca0073",
+    "approved-audition.m4a": "61d6c7f0502f9e8a168891c8830c808e99f85b5c3cb0e66b0ab39ab5cfe5d4ea"
+  }
+}

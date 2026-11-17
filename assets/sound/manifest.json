@@ -1,0 +1,258 @@
+{
+  "source": {
+    "name": "Versilian Community Sample Library (VCSL)",
+    "repo": "sgossner/VCSL",
+    "commit": "c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e",
+    "licence": "CC0 1.0 \u2014 README: \"you can do whatever you want with these sounds (even make commercial software), no royalties, no credit, no special terms.\" Verified 2026-11-16."
+  },
+  "output": "assets/sound/vcsl/<id>.wav \u2014 48 kHz PCM16, trimmed to `seconds`, leading silence removed, 0.6 s fade-out",
+  "samples": [
+    {
+      "id": "piano_Fs1",
+      "instrument": "piano",
+      "path": "Chordophones/Zithers/Grand Piano, Steinway B/Sus/JHPiano_Sus_Close_F#1_vl2_rr1.wav",
+      "gitBlob": "d9c0a0df3bfe94516632b668c2ff23dc011d23f5",
+      "size": 7683088,
+      "seconds": 5.0,
+      "note": "F#1"
+    },
+    {
+      "id": "piano_C2",
+      "instrument": "piano",
+      "path": "Chordophones/Zithers/Grand Piano, Steinway B/Sus/JHPiano_Sus_Close_C2_vl2_rr1.wav",
+      "gitBlob": "7998140b28c0dc550f5c65e2d8e856ce00c09b88",
+      "size": 7731874,
+      "seconds": 5.0,
+      "note": "C2"
+    },
+    {
+      "id": "piano_D2",
+      "instrument": "piano",
+      "path": "Chordophones/Zithers/Grand Piano, Steinway B/Sus/JHPiano_Sus_Close_D2_vl2_rr1.wav",
+      "gitBlob": "970c7e65e3d93b43f686d3b534cc050c1a957f7a",
+      "size": 9251578,
+      "seconds": 5.0,
+      "note": "D2"
+    },
+    {
+      "id": "piano_Fs2",
+      "instrument": "piano",
+      "path": "Chordophones/Zithers/Grand Piano, Steinway B/Sus/JHPiano_Sus_Close_F#2_vl2_rr1.wav",
+      "gitBlob": "7c5658016532511e11f5eb3cd7bd27dca03677af",
+      "size": 7585270,
+      "seconds": 5.0,
+      "note": "F#2"
+    },
+    {
+      "id": "piano_As2",
+      "instrument": "piano",
+      "path": "Chordophones/Zithers/Grand Piano, Steinway B/Sus/JHPiano_Sus_Close_A#2_vl2_rr1.wav",
+      "gitBlob": "c714ff9d1936bb2ae5e8d93ca9c93e1fe2a700f3",
+      "size": 6974362,
+      "seconds": 5.0,
+      "note": "A#2"
+    },
+    {
+      "id": "piano_D3",
+      "instrument": "piano",
+      "path": "Chordophones/Zithers/Grand Piano, Steinway B/Sus/JHPiano_Sus_Close_D3_vl2_rr1.wav",
+      "gitBlob": "e66755168d912c95574e343f14cf81db4f4bc554",
+      "size": 8354440,
+      "seconds": 5.0,
+      "note": "D3"
+    },
+    {
+      "id": "piano_Fs3",
+      "instrument": "piano",
+      "path": "Chordophones/Zithers/Grand Piano, Steinway B/Sus/JHPiano_Sus_Close_F#3_vl2_rr1.wav",
+      "gitBlob": "00e0708f9a996387415e1863fdb2af3a2c3afcfa",
+      "size": 7220560,
+      "seconds": 5.0,
+      "note": "F#3"
+    },
+    {
+      "id": "piano_As3",
+      "instrument": "piano",
+      "path": "Chordophones/Zithers/Grand Piano, Steinway B/Sus/JHPiano_Sus_Close_A#3_vl2_rr1.wav",
+      "gitBlob": "a4f82c9a8f09e555c00cfc7eb173ac233f09861c",
+      "size": 6364090,
+      "seconds": 5.0,
+      "note": "A#3"
+    },
+    {
+      "id": "piano_D4",
+      "instrument": "piano",
+      "path": "Chordophones/Zithers/Grand Piano, Steinway B/Sus/JHPiano_Sus_Close_D4_vl2_rr1.wav",
+      "gitBlob": "bbc04bc0b941685b290563863c2d779e8bd70819",
+      "size": 7669036,
+      "seconds": 5.0,
+      "note": "D4"
+    },
+    {
+      "id": "piano_E4",
+      "instrument": "piano",
+      "path": "Chordophones/Zithers/Grand Piano, Steinway B/Sus/JHPiano_Sus_Close_E4_vl2_rr1.wav",
+      "gitBlob": "b1b8b3b822204409eb993a5e70b1c2722e985046",
+      "size": 6195784,
+      "seconds": 5.0,
+      "note": "E4"
+    },
+    {
+      "id": "piano_Fs4",
+      "instrument": "piano",
+      "path": "Chordophones/Zithers/Grand Piano, Steinway B/Sus/JHPiano_Sus_Close_F#4_vl2_rr1.wav",
+      "gitBlob": "8a0bc37b05eb6a3cef19abd6257e9455aff7d660",
+      "size": 6823336,
+      "seconds": 5.0,
+      "note": "F#4"
+    },
+    {
+      "id": "piano_As4",
+      "instrument": "piano",
+      "path": "Chordophones/Zithers/Grand Piano, Steinway B/Sus/JHPiano_Sus_Close_A#4_vl2_rr1.wav",
+      "gitBlob": "0966491e828da8222f8ee06cb6374f338c3b7ae4",
+      "size": 5635126,
+      "seconds": 5.0,
+      "note": "A#4"
+    },
+    {
+      "id": "piano_C5",
+      "instrument": "piano",
+      "path": "Chordophones/Zithers/Grand Piano, Steinway B/Sus/JHPiano_Sus_Close_C5_vl2_rr1.wav",
+      "gitBlob": "cdd08c6535233e6cc6937c79a15fae6d7a6cd88f",
+      "size": 6255076,
+      "seconds": 5.0,
+      "note": "C5"
+    },
+    {
+      "id": "piano_D5",
+      "instrument": "piano",
+      "path": "Chordophones/Zithers/Grand Piano, Steinway B/Sus/JHPiano_Sus_Close_D5_vl2_rr1.wav",
+      "gitBlob": "8616fad753e063468bd989313393e3a1044e24c6",
+      "size": 5639908,
+      "seconds": 5.0,
+      "note": "D5"
+    },
+    {
+      "id": "piano_E5",
+      "instrument": "piano",
+      "path": "Chordophones/Zithers/Grand Piano, Steinway B/Sus/JHPiano_Sus_Close_E5_vl2_rr1.wav",
+      "gitBlob": "4fb8461e3398456f68a9f71696c5cfe4e02f4fbd",
+      "size": 5052622,
+      "seconds": 5.0,
+      "note": "E5"
+    },
+    {
+      "id": "piano_Fs5",
+      "instrument": "piano",
+      "path": "Chordophones/Zithers/Grand Piano, Steinway B/Sus/JHPiano_Sus_Close_F#5_vl2_rr1.wav",
+      "gitBlob": "9110f54d26edbc247c7bad43d60779991f569cc3",
+      "size": 4894504,
+      "seconds": 5.0,
+      "note": "F#5"
+    },
+    {
+      "id": "vibes_F4",
+      "instrument": "vibes",
+      "path": "Idiophones/Struck Idiophones/Vibraphone/Soft Mallets/Vibes_soft_F4_v1_rr1_Main.wav",
+      "gitBlob": "0e230262665e212a99cab1a11cfdad30b9977492",
+      "size": 1368508,
+      "seconds": 4.0,
+      "note": "F4"
+    },
+    {
+      "id": "vibes_A4",
+      "instrument": "vibes",
+      "path": "Idiophones/Struck Idiophones/Vibraphone/Soft Mallets/Vibes_soft_A4_v1_rr1_Main.wav",
+      "gitBlob": "0e113727968fe8c907e483ef619abadb8060431f",
+      "size": 1465148,
+      "seconds": 4.0,
+      "note": "A4"
+    },
+    {
+      "id": "vibes_C5",
+      "instrument": "vibes",
+      "path": "Idiophones/Struck Idiophones/Vibraphone/Soft Mallets/Vibes_soft_C5_v1_rr1_Main.wav",
+      "gitBlob": "46a9c03a0ecfaee7246b10e2eec32908853ab860",
+      "size": 641932,
+      "seconds": 4.0,
+      "note": "C5"
+    },
+    {
+      "id": "vibes_E5",
+      "instrument": "vibes",
+      "path": "Idiophones/Struck Idiophones/Vibraphone/Soft Mallets/Vibes_soft_E5_v1_rr1_Main.wav",
+      "gitBlob": "5ed1086c7afbe31827afa8be8a8c7c55dcbd7b01",
+      "size": 1019012,
+      "seconds": 4.0,
+      "note": "E5"
+    },
+    {
+      "id": "chime_A4",
+      "instrument": "chime",
+      "path": "Idiophones/Struck Idiophones/Hand Chimes/sus_A4_r01_main.wav",
+      "gitBlob": "35a2fcf5fa6bf707a4fd9b85cda654cd0cf09965",
+      "size": 2349762,
+      "seconds": 3.0,
+      "note": "A4"
+    },
+    {
+      "id": "chime_D5",
+      "instrument": "chime",
+      "path": "Idiophones/Struck Idiophones/Hand Chimes/sus_D5_r01_main.wav",
+      "gitBlob": "f9b550abb2112d96b4a1e980ce85221a5f759b05",
+      "size": 2411250,
+      "seconds": 3.0,
+      "note": "D5"
+    },
+    {
+      "id": "chime_Fs5",
+      "instrument": "chime",
+      "path": "Idiophones/Struck Idiophones/Hand Chimes/sus_F#5_r01_main.wav",
+      "gitBlob": "17f05c44c988aaf2db321427fb81c53cc58212de",
+      "size": 1531950,
+      "seconds": 3.0,
+      "note": "F#5"
+    },
+    {
+      "id": "claves_soft_1",
+      "instrument": "claves",
+      "path": "Idiophones/Struck Idiophones/Claves/Claves1_Hit_v1_rr1_Mid.wav",
+      "gitBlob": "074c11f639e3207fd5e55dc8f869902ed4785f7a",
+      "size": 199848,
+      "seconds": 0.5
+    },
+    {
+      "id": "claves_soft_2",
+      "instrument": "claves",
+      "path": "Idiophones/Struck Idiophones/Claves/Claves2_Hit_v1_rr1_Mid.wav",
+      "gitBlob": "9f0cd27df65f6c7b9d20204a962e06ceb7c4193c",
+      "size": 126800,
+      "seconds": 0.5
+    },
+    {
+      "id": "wood_pp_1",
+      "instrument": "woodblock",
+      "path": "Idiophones/Struck Idiophones/Woodblock/wood_click_pp_rr1.wav",
+      "gitBlob": "74858894be5bbdd0da1c4a8c46ad234ed8e9b95f",
+      "size": 107200,
+      "seconds": 0.5
+    },
+    {
+      "id": "wood_pp_2",
+      "instrument": "woodblock",
+      "path": "Idiophones/Struck Idiophones/Woodblock/wood_click_pp_rr2.wav",
+      "gitBlob": "27f32555c46d4311f20e37c71a50e6fbb1adbfa9",
+      "size": 107200,
+      "seconds": 0.5
+    },
+    {
+      "id": "wood_pp_3",
+      "instrument": "woodblock",
+      "path": "Idiophones/Struck Idiophones/Woodblock/wood_click_pp_rr3.wav",
+      "gitBlob": "63e544917f0dd25f9bd70314f57750243d506303",
+      "size": 82468,
+      "seconds": 0.5
+    }
+  ]
+}

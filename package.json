@@ -1,0 +1,44 @@
+{
+  "name": "make-work-click",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "MAKE WORK CLICK \u2014 short-form video production pipeline",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "setup": "bash scripts/setup.sh",
+    "setup:voice": "bash scripts/tts/setup.sh",
+    "doctor": "node scripts/doctor.ts",
+    "studio": "remotion studio",
+    "render": "node scripts/render.ts",
+    "qa": "node scripts/qa.ts",
+    "profile": "node scripts/profile-render.ts",
+    "voices": "node scripts/voices.ts",
+    "voice": "node scripts/voice.ts",
+    "approve-take": "node scripts/approve-take.ts",
+    "mix": "node scripts/mix.ts",
+    "deliver": "node scripts/deliver.ts",
+    "build": "node scripts/make.ts --no-qa",
+    "make": "node scripts/make.ts",
+    "new-video": "node scripts/new-video.ts",
+    "publish-pack": "node scripts/publish-pack.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test --disable-warning=ExperimentalWarning \"tests/**/*.test.ts\"",
+    "check": "npm run typecheck && npm test"
+  },
+  "dependencies": {
+    "@remotion/bundler": "4.0.539",
+    "@remotion/cli": "4.0.539",
+    "@remotion/renderer": "4.0.539",
+    "react": "19.2.9",
+    "react-dom": "19.2.9",
+    "remotion": "4.0.539"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "@types/react": "19.2.18",
+    "typescript": "5.9.3"
+  }
+}

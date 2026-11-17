@@ -1,0 +1,9 @@
+node_modules/
+.venv/
+out/
+public/generated/
+data/*.db
+data/*.db-*
+*.log
+.DS_Store
+.cache/

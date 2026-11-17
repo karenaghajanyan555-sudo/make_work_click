@@ -1,0 +1,28 @@
+{
+  "repo": "hexgrad/Kokoro-82M",
+  "revision": "f3ff3571791e39611d31c381e3a41a3af07b4987",
+  "licence": "Apache-2.0 (model card: https://huggingface.co/hexgrad/Kokoro-82M)",
+  "note": "Voices: only those the approved narrator (src/brand/voice.ts) blends. Add a voice here only to audition it (docs/SOUND.md).",
+  "files": [
+    {
+      "path": "config.json",
+      "size": 2351,
+      "sha256": "5abb01e2403b072bf03d04fde160443e209d7a0dad49a423be15196b9b43c17f"
+    },
+    {
+      "path": "kokoro-v1_0.pth",
+      "size": 327212226,
+      "sha256": "496dba118d1a58f5f3db2efc88dbdc216e0483fc89fe6e47ee1f2c53f18ad1e4"
+    },
+    {
+      "path": "voices/af_bella.pt",
+      "size": 523425,
+      "sha256": "8cb64e02fcc8de0327a8e13817e49c76c945ecf0052ceac97d3081480e8e48d6"
+    },
+    {
+      "path": "voices/af_nicole.pt",
+      "size": 523430,
+      "sha256": "c5561808bcf5250fe8c5f5de32caf2d94f27e57e95befdb098c5c85991d4c5da"
+    }
+  ]
+}
