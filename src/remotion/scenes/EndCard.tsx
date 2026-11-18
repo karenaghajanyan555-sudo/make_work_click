@@ -8,5 +8,5 @@ import { BrandLockup } from '../brand/Lockup.tsx';
  */
 export const EndCard: React.FC<{ props: EndCardProps; duration: number }> = ({ props, duration }) => {
   useFontsReady();
-  return <BrandLockup beats={endCardBeats(props)} cta={props.cta} switchHandedOver={props.switchHandedOver} burst={props.burst} duration={duration} />;
+  return <BrandLockup beats={endCardBeats(props)} cta={props.cta} switchHandedOver={props.switchHandedOver} burst={props.burst} smooth={props.smooth} duration={duration} disclosure={props.disclosure} />;
 };

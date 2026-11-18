@@ -11,6 +11,9 @@
  */
 
 export type FlowStepKind = 'trigger' | 'email' | 'wait' | 'goal';
+/** Icon overrides for a step (opt-in; by default the icon follows `kind`). `card`: a payment taken (v008); `contact`: a contact added to a list or a pipeline stage, on a step that is not the trigger (v009). */
+export const FLOW_STEP_ICONS = ['card', 'contact'] as const;
+export type FlowStepIcon = (typeof FLOW_STEP_ICONS)[number];
 
 export type FlowStep = {
   kind: FlowStepKind;
@@ -22,6 +25,8 @@ export type FlowStep = {
   chipBefore?: string;
   /** Chip text when the step completes in a full run (flowRun). Defaults to `chip`. */
   chipDone?: string;
+  /** Icon override (opt-in, v008): e.g. `card` for a payment step, where the goal's return arrow would read as a refund. */
+  icon?: FlowStepIcon;
 };
 
 export type Fragment = {
@@ -67,6 +72,12 @@ export type ChaosToSystemProps = {
   /** 2–4 flow steps. */
   flow: FlowStep[];
   beats?: Partial<ChaosToSystemBeats>;
+  /**
+   * Premium motion (opt-in, v003+): one continuous camera path (no stop-start at each key, no
+   * speed jump into the next scene) and soft light (neutral bloom, tight lime core) instead of
+   * the click flash and the wide lime glow.
+   */
+  smooth?: boolean;
 };
 
 export const CHAOS_TO_SYSTEM_DEFAULT_BEATS: ChaosToSystemBeats = {
@@ -150,6 +161,9 @@ export function validateChaosToSystem(props: ChaosToSystemProps): string[] {
     errors.push(`flow needs ${CHAOS_TO_SYSTEM_LIMITS.flowMin}-${CHAOS_TO_SYSTEM_LIMITS.flowMax} steps (got ${flow.length})`);
   }
   if (flow[0] && flow[0].kind !== 'trigger') errors.push('first flow step must be a trigger');
+  flow.forEach((st, i) => {
+    if (st.icon !== undefined && !(FLOW_STEP_ICONS as readonly string[]).includes(st.icon)) errors.push(`flow step ${i}: icon "${st.icon}" is not one of ${FLOW_STEP_ICONS.join(', ')}`);
+  });
   const targets = fragments.map((f) => f.becomes).filter((b): b is number => b !== undefined);
   if (new Set(targets).size !== targets.length) errors.push('two fragments become the same flow step');
   for (const t of targets) {

@@ -32,13 +32,34 @@ Checked 2026-11-16. Re-verify before relying on anything older than ~6 months.
 | YouTube: title, description | Title ≤ 100 characters, no `<` or `>`; description ≤ 5,000 bytes | https://developers.google.com/youtube/data/reference/rest/v3/videos, https://support.google.com/youtube/answer/57404 |
 | Meta (Instagram, Facebook): AI disclosure | "We require people to use this disclosure and label tool when they post organic content" with photorealistic video or realistic-sounding audio "that was digitally created or altered, and we may apply penalties if they fail to do so." (post of 2026-02-19) | https://about.fb.com/news/2026/02/meta-prepares-for-2026-us-midterms/ |
 | TikTok: AI disclosure | "We require creators to label AI-generated or significantly edited content that shows realistic-looking scenes or people." Unlabeled content "may be removed, restricted, or labeled". Effective 2026-09-24. The page does not mention synthetic voices. | https://www.tiktok.com/community-guidelines/en/integrity-authenticity |
+| TikTok: AI label covers audio (checked 2026-11-18) | "We also require creators to label all AI-generated content that contains realistic images, audio, and video". Steps: "Tap More options ..., then turn on the AI-generated content setting." "Turning on the AI-generated content setting won't affect the distribution of your video as long as it doesn't violate our Community Guidelines." | https://support.tiktok.com/en/using-tiktok/creating-videos/ai-generated-content |
+| Bio (checked 2026-11-18) | TikTok: "Bios cannot exceed 80 characters." Instagram: "You can add up to 5 websites to your Instagram profile." "Tap Links, then tap Add external link to add the URL for your website." (iPhone tab). Instagram's 150-character bio limit: not verified (page did not load). | https://www.tiktok.com/support/faq_detail?id=7096681482017692162, https://help.instagram.com/362497417173378 |
 | TikTok: TTS narration | **Not verified.** A search summary of the Creator Academy said generic TTS narration needs no disclosure; the page itself would not load. | (tiktok.com/creator-academy, not loaded) |
+| Instagram: caption (checked 2026-11-17) | "Maximum 2200 characters, 30 hashtags, and 20 @ tags." (Graph API, the `caption` field when publishing media) | https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media |
+| TikTok: caption (checked 2026-11-17) | `post_info.title`: "The maximum length is 2200 in UTF-16 runes." (Content Posting API, direct post) | https://developers.tiktok.com/doc/content-posting-api-reference-direct-post |
+| Facebook Reels: caption | **Not verified.** The package holds Facebook copy to the 2,200 limit above. | — |
 
 How we apply it (our decision): **turn the AI label on for every platform** and say
-"Narration voice is AI-generated" in the caption. Meta requires it for our realistic
-synthetic narration. On YouTube and TikTok it is a choice: the verified rules don't clearly
-cover a synthetic non-person narrator, and being open about it fits a brand about AI tools.
+"Narration voice is AI-generated" in the caption. Meta and TikTok require it for our realistic
+synthetic narration (TikTok since we read its AI page on 2026-11-18: "realistic … audio"). On
+YouTube it is a choice: the verified rule doesn't clearly cover a synthetic non-person
+narrator, and being open about it fits a brand about AI tools.
 Not verified: whether the label affects reach.
+
+## Affiliate disclosure (checked 2026-11-17; how we apply it: D42)
+| Topic | What the source says | Source |
+|---|---|---|
+| TikTok: affiliate = branded content | Branded content includes "A product or service for which you will receive a commission on any sales (for instance, via an affiliate link or promotional code)". "When posting branded content, you must enable the commercial content disclosure toggle." The product must be clear "without requiring viewers to access your profile page or any links", e.g. named "verbally and/or in the text caption". Prohibited: "“get-rich-quick” schemes". Effective 30 Oct 2026. | https://www.tiktok.com/legal/page/global/bc-policy/en |
+| Instagram: affiliate links | "You join a third party affiliate program and earn commissions from affiliate links on your posts or reels." → "Use the paid partnership label". | https://help.instagram.com/616901995832907 |
+| FTC: clear and conspicuous | Visual representation → disclosure "in at least the communication's visual portion"; visual and audible → "in the communication's visual and audible portions"; social media → "should be unavoidable". The Guides are the FTC's interpretation of section 5, "the basis for voluntary compliance". | 16 CFR 255.0 (https://www.law.cornell.edu/cfr/text/16/255.0) |
+| FTC: placement, tools | A disclosure only in a video description is "not enough on its own"; on TikTok a text description is "very unlikely to be clear and conspicuous"; on Instagram it must show "without having to click 'more'"; "it's always best to add your own disclosure even if a platform offers its own disclosure tool". (Quotes extracted with WebFetch: the site blocks direct download.) | https://www.ftc.gov/business-guidance/resources/ftcs-endorsement-guides-what-people-are-asking |
+
+| TikTok: where the toggle is (checked 2026-11-18) | "On the post screen, click Content disclosure and ads" (not in TikTok One: "More options" first) → "Turn on Disclose commercial content" → "Your brand or Branded content"; tagging a brand partner is a further step. Also after posting: post → More options → Ad settings. "If you don't display the proper disclosure, your post may be removed or restricted." | https://ads.tiktok.com/help/article/how-to-turn-on-the-commercial-content-disclosure-setting-in-tiktok (Last updated January 2026) |
+| Instagram: label on a reel (checked 2026-11-18) | "Tap More options. Tap Add paid partnership label and then turn the Add paid partnership label toggle on." Up to 2 brands. Unapproved brand: label "without the brand partner's name"; "If the brand denies your request, the paid partnership label will be removed from your content." First enable branded content tools (profile → Menu → Business/Creator tools and controls → Branded content → Set up branded content tools → Enable). | https://help.instagram.com/1109894795810258, https://help.instagram.com/1123581461537025 |
+| TikTok: website link in the profile (checked 2026-11-18) | "You can add a link to a website on your TikTok profile if you have at least 1,000 followers, or if you have a Verified Business Account." Steps: "Next to Links, tap Add." "When you tap a link on someone's profile, our in-app browser will open the page." | https://www.tiktok.com/support/faq_detail?id=7581821550328896012 |
+
+Not verified: Facebook's affiliate case (only Instagram's help page spells it out), YouTube's
+paid-promotion setting, Instagram's in-app AI-label wording for a reel, whether the labels reduce reach, and non-US law.
 
 ## Licences
 - Remotion (package `LICENSE.md`, remotion.dev/docs/license/faq): free for individuals and

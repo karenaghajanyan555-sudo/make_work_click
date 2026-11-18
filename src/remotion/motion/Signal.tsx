@@ -1,6 +1,7 @@
+import { AbsoluteFill } from 'remotion';
 import { palette } from '../../brand/tokens.ts';
-import { ease, progress } from '../lib/anim.ts';
-import { useTime } from '../lib/hooks.ts';
+import { ease, progress, softRadial } from '../lib/anim.ts';
+import { useTheme, useTime } from '../lib/hooks.ts';
 
 /**
  * Brand signature micro-interaction: the click ripple. Fires at `at` seconds,
@@ -51,6 +52,30 @@ export const ClickRipple: React.FC<{ at: number; x: number; y: number; size?: nu
         }}
       />
     </div>
+  );
+};
+
+/**
+ * Signal light, premium version (opt-in `smooth` scenes): a wide *neutral* bloom in the theme's
+ * key-light colour plus a tight signal-lime core. A wide, shallow lime gradient breaks into hue
+ * rings after H.264 4:2:0 (the grain only dithers brightness, measured: D40); a neutral bloom
+ * bands only in brightness, which the grain dithers, and the lime stays where its gradient is
+ * steep. Smoothstep falloff: no visible edge. Positions and radii in px; `bloom`/`signal` 0–1.
+ */
+export const SoftLight: React.FC<{ x: number; y: number; rx: number; ry: number; core: number; bloom: number; signal: number }> = ({ x, y, rx, ry, core, bloom, signal }) => {
+  const theme = useTheme();
+  const at = [`${x}px`, `${y}px`] as const;
+  if (bloom <= 0 && signal <= 0) return null;
+  return (
+    <AbsoluteFill
+      style={{
+        background: [
+          softRadial(palette.signal, 0.2 * signal, core, core * 0.78, ...at),
+          softRadial(`rgb(${theme.keyLight.rgb})`, 0.085 * bloom, rx, ry, ...at),
+        ].join(', '),
+        pointerEvents: 'none',
+      }}
+    />
   );
 };
 

@@ -74,7 +74,9 @@ export async function renderMaster(s: Session, spec: VideoSpec, timeline: Timeli
   const list = path.join(dir, 'concat.txt');
   writeFileSync(list, plan.map((p) => `file '${path.basename(p.file)}'`).join('\n') + '\n');
   mkdirSync(path.dirname(out), { recursive: true });
-  const r = await ff('ffmpeg', ['-hide_banner', '-y', '-v', 'error', '-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', '-movflags', '+faststart', '-f', 'mp4', out]);
+  const part = `${out}.part.mp4`;
+  const r = await ff('ffmpeg', ['-hide_banner', '-y', '-v', 'error', '-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', '-movflags', '+faststart', '-f', 'mp4', part]);
   if (r.code !== 0) throw new Error(`concat: ${r.stderr.slice(-500)}`);
+  renameSync(part, out); // never a half-written master
   return { segments: done, concatSeconds: (performance.now() - t0) / 1000 };
 }

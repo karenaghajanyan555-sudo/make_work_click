@@ -1,0 +1,39 @@
+{
+  "video": "v003-invoices-chase-themselves",
+  "take": "take-01",
+  "approvedOn": "2026-11-17",
+  "source": "draft 162abf6cd00ae234 (npm run voice)",
+  "rule": "Immutable. Never overwrite or re-synthesise; improvements go to a new take directory.",
+  "voice": {
+    "mix": [
+      [
+        "af_bella",
+        0.6
+      ],
+      [
+        "af_nicole",
+        0.4
+      ]
+    ]
+  },
+  "speed": 1,
+  "seed": 7,
+  "engine": {
+    "kokoro": "0.9.4",
+    "misaki": "0.9.4",
+    "torch": "2.14.1+cpu",
+    "modelRevision": "f3ff3571791e39611d31c381e3a41a3af07b4987"
+  },
+  "files": {
+    "take.json": "77d82cce8a84855de56630a040432e18db67e1f0b46974163d42304c8841dc9d",
+    "take.wav": "fc553ef7467e00019881c632a68cc2c9cbc0ef04b376088b98ebca5b3bf21c5b",
+    "hook.wav": "44ef0002973aa5f6a4df572e23860573bb5e55bdb4dfbd3d07dd2b17c31fd888",
+    "system.wav": "9d548d344044506493162b71b73cb34a6bc945fb2f4c8375110381ab47b32842",
+    "step1.wav": "8bb7ae213778a5e7d13dbe49a4ce4c241067f5b7ca2b4ddaef1d2674eaee384a",
+    "step2.wav": "1524379b976caaa4eb1fe27ec151d1dbd5267563f724b3ebb9145bf02ed0b474",
+    "step3.wav": "fb30db118ebc74dfc15379703ccd9b014117b684e8a8bd27c894b54dbe7aeb16",
+    "payoff.wav": "351f81e92aba1c8b758a3acfda954d89c5f58914861e136ac4f36fa5c1dcedf2",
+    "cta.wav": "dafb1252e5f44e11ad4218a51829d2ab1b1306c4e9a72c5aef4f5b46685ce51d",
+    "approved-audition.m4a": "d75ad87b66b48267d2e0cc8bae34c8671bce2b90fc1eed3d11db6c6090d2c2e6"
+  }
+}

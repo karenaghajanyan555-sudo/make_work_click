@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { AbsoluteFill } from 'remotion';
-import { fonts, palette, radius, type } from '../../brand/tokens.ts';
+import { duration as D, fonts, palette, radius, type } from '../../brand/tokens.ts';
 import type { Rect } from '../../brand/format.ts';
 import {
   chaosToSystemBeats,
@@ -19,7 +19,7 @@ import { useFontsReady } from '../lib/fonts.ts';
 import { useLayout, useTime } from '../lib/hooks.ts';
 import { SCATTER } from '../../video/scenes/scatter.ts';
 import { CameraRig, DEPTH } from '../motion/Camera.tsx';
-import { ClickRipple, LightSweep } from '../motion/Signal.tsx';
+import { ClickRipple, LightSweep, SoftLight } from '../motion/Signal.tsx';
 import { KineticPhrase } from '../brand/KineticPhrase.tsx';
 import { Connector, FLOW_METRICS, NodeBody, nodeSurface, type ChipState } from '../ui/Flow.tsx';
 import { MEMO, MemoContent, memoWidth } from '../ui/Memo.tsx';
@@ -92,14 +92,28 @@ export const ChaosToSystem: React.FC<{ props: ChaosToSystemProps; duration: numb
   const on = progress(frame, f(b.click), f(0.22), ease.inOut);
   const mood = progress(frame, f(b.click), f(0.9), ease.out);
   const flash = progress(frame, f(b.click), f(0.12)) * (1 - progress(frame, f(b.click + 0.1), f(0.6), ease.in));
+  // Smooth: the click blooms and fades instead of flashing, and is gone by the cut (flowRun
+  // has no bloom: a bloom still on at the last frame pops off at the cut, measured).
+  const bloomPeak = b.click + D.quick;
+  const bloomFade = Math.max(D.micro, Math.min(D.slow, duration - 2 / 30 - bloomPeak));
+  const bloom = progress(frame, f(b.click), f(D.quick), ease.glide) * (1 - progress(frame, f(bloomPeak), f(bloomFade), ease.inOut));
   const sw = switchCenter(win, u);
 
-  const camera: CameraKey[] = [
-    { t: 0, zoom: 1, x: 0, y: 0 },
-    { t: b.hookOut + 0.1, zoom: 1.035, x: 0, y: 0, ease: 'linear' },
-    { t: cues.aligned ?? b.flip, zoom: 1, x: 0, y: 0 },
-    { t: duration, zoom: 1.025, x: 0, y: 0, ease: 'linear' },
-  ];
+  const camera: CameraKey[] = props.smooth
+    ? [
+        // Smooth: the reel opens already gliding in (the path starts before frame 0), pushes
+        // into the hook, eases back as the system assembles, then pushes on into the run.
+        { t: -1.2, zoom: 0.985, x: 0, y: 0 },
+        { t: b.hookOut + 0.1, zoom: 1.035, x: 0, y: 0 },
+        { t: cues.aligned ?? b.flip, zoom: 1, x: 0, y: 0 },
+        { t: duration, zoom: 1.025, x: 0, y: 0 },
+      ]
+    : [
+        { t: 0, zoom: 1, x: 0, y: 0 },
+        { t: b.hookOut + 0.1, zoom: 1.035, x: 0, y: 0, ease: 'linear' },
+        { t: cues.aligned ?? b.flip, zoom: 1, x: 0, y: 0 },
+        { t: duration, zoom: 1.025, x: 0, y: 0, ease: 'linear' },
+      ];
 
   // Run phase: only steps that can resolve and be read (~0.5s) before the scene ends.
   const runnable = steps.map((_, i) => i === 0 || stepDoneAt(b, i) + RUN_READ_SECONDS <= duration);
@@ -135,18 +149,28 @@ export const ChaosToSystem: React.FC<{ props: ChaosToSystemProps; duration: numb
   return (
     <AbsoluteFill>
       {/* Scene light: signal bounce under the window once the system is on, plus the click flash. */}
-      <AbsoluteFill
-        style={{
-          background: `radial-gradient(${900 * u}px ${520 * u}px at 50% ${((win.y + win.height) / layout.height) * 100}%, rgba(201,242,93,${0.11 * mood}), transparent 70%)`,
-        }}
-      />
-      <AbsoluteFill
-        style={{
-          background: `radial-gradient(${1100 * u}px ${1100 * u}px at ${(sw.x / layout.width) * 100}% ${(sw.y / layout.height) * 100}%, rgba(201,242,93,${0.16 * flash}), transparent 65%)`,
-        }}
-      />
+      {props.smooth ? (
+        <>
+          {/* Same light as flowRun's first frame (the cut stays invisible). */}
+          <SoftLight x={layout.width / 2} y={win.y + win.height} rx={900 * u} ry={560 * u} core={320 * u} bloom={mood} signal={mood * 0.85} />
+          <SoftLight x={sw.x} y={sw.y} rx={700 * u} ry={700 * u} core={220 * u} bloom={bloom} signal={bloom} />
+        </>
+      ) : (
+        <>
+          <AbsoluteFill
+            style={{
+              background: `radial-gradient(${900 * u}px ${520 * u}px at 50% ${((win.y + win.height) / layout.height) * 100}%, rgba(201,242,93,${0.11 * mood}), transparent 70%)`,
+            }}
+          />
+          <AbsoluteFill
+            style={{
+              background: `radial-gradient(${1100 * u}px ${1100 * u}px at ${(sw.x / layout.width) * 100}% ${(sw.y / layout.height) * 100}%, rgba(201,242,93,${0.16 * flash}), transparent 65%)`,
+            }}
+          />
+        </>
+      )}
 
-      <CameraRig keys={camera}>
+      <CameraRig keys={camera} smooth={props.smooth}>
         {props.fragments.map((frag, i) =>
           frag.becomes === undefined && SCATTER[i] && SCATTER[i]!.plane !== 'near' ? <ScatterMemo key={i} frag={frag} index={i} leaveAt={b.gather} /> : null,
         )}

@@ -10,7 +10,10 @@ export type PublishSpec = {
   coverAt: number;
   /** YouTube Shorts title (also the first line people read elsewhere). */
   title: string;
-  /** Caption body shared by every platform. Plain text, no links (no affiliate links, ever). */
+  /**
+   * Caption body shared by every platform. Plain text, no links: an affiliate link goes in the
+   * bio, and an affiliate video's disclosure line is put in front automatically (postText).
+   */
   caption: string;
   /** A few specific tags, written with the leading "#". */
   hashtags: string[];
@@ -29,12 +32,17 @@ export const PUBLISH_LIMITS = {
 const LINK = /https?:\/\/|www\.|\b[a-z0-9-]+\.(com|io|co|ai|app|net|org|ly|link)\b/i;
 const HASHTAG = /^#[\p{L}\p{N}_]+$/u;
 
-/** Full caption as posted: body, a blank line, the hashtags. */
-export function postText(p: PublishSpec): string {
-  return p.hashtags.length ? `${p.caption.trim()}\n\n${p.hashtags.join(' ')}` : p.caption.trim();
+/**
+ * Full caption as posted: the disclosure line first (affiliate videos: it must read before
+ * "more"), the body, a blank line, the hashtags.
+ */
+export function postText(p: PublishSpec, disclosure?: string): string {
+  const body = disclosure && !p.caption.trim().startsWith(disclosure) ? `${disclosure}\n\n${p.caption.trim()}` : p.caption.trim();
+  return p.hashtags.length ? `${body}\n\n${p.hashtags.join(' ')}` : body;
 }
 
-export function validatePublish(p: PublishSpec, videoSeconds: number): string[] {
+/** `allowNames`: brand names that look like a domain but are not a link ("systeme.io"). */
+export function validatePublish(p: PublishSpec, videoSeconds: number, allowNames: string[] = []): string[] {
   const e: string[] = [];
   if (!(p.coverAt >= 0 && p.coverAt < videoSeconds)) e.push(`publish.coverAt ${p.coverAt}s is outside the video (0–${videoSeconds}s)`);
   const title = p.title.trim();
@@ -44,7 +52,8 @@ export function validatePublish(p: PublishSpec, videoSeconds: number): string[] 
   if (!p.caption.trim()) e.push('publish.caption is empty');
   const bytes = Buffer.byteLength(postText(p), 'utf8');
   if (bytes > PUBLISH_LIMITS.captionBytes) e.push(`publish caption + hashtags is ${bytes} bytes (max ${PUBLISH_LIMITS.captionBytes})`);
-  if (LINK.test(p.title) || LINK.test(p.caption)) e.push('publish: no links in the title or caption');
+  const unnamed = (s: string) => allowNames.reduce((t, n) => t.split(n).join(' '), s);
+  if (LINK.test(unnamed(p.title)) || LINK.test(unnamed(p.caption))) e.push('publish: no links in the title or caption');
   if (p.hashtags.length > PUBLISH_LIMITS.maxHashtags) e.push(`publish.hashtags: ${p.hashtags.length} tags (max ${PUBLISH_LIMITS.maxHashtags})`);
   const seen = new Set<string>();
   for (const h of p.hashtags) {

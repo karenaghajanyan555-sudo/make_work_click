@@ -11,9 +11,11 @@
  * every file's sha256. Never overwrites: improvements become take-NN+1 beside it.
  * tests/narration-assets.test.ts fails if an approved file changes or the script drifts.
  * Then set `narration.take` in the video spec to the new take.
+ * Atomic: the take is assembled in take-NN.part/ and renamed only when every file is copied,
+ * verified against its source and listed in approved.json; an interrupted run leaves no take.
  */
 import { createHash } from 'node:crypto';
-import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { getVideo } from '../content/index.ts';
 import { ROOT, videoOut } from '../src/pipeline/paths.ts';
@@ -40,22 +42,24 @@ const take = JSON.parse(readFileSync(path.join(src, 'take.json'), 'utf8')) as Ta
 
 const base = path.join(ROOT, 'public', 'narration', id);
 mkdirSync(base, { recursive: true });
+// Leftovers of an interrupted run are never a take.
+for (const d of readdirSync(base)) if (/^take-\d{2}\.part$/.test(d)) rmSync(path.join(base, d), { recursive: true, force: true });
 const used = readdirSync(base).filter((d) => /^take-\d{2}$/.test(d)).map((d) => Number(d.slice(5)));
 const name = `take-${String(Math.max(0, ...used) + 1).padStart(2, '0')}`;
 const dest = path.join(base, name);
-mkdirSync(dest);
+const part = `${dest}.part`;
+mkdirSync(part);
 
 const files = ['take.json', 'take.wav', ...take.lines.map((l) => l.file)];
 const sha = (f: string) => createHash('sha256').update(readFileSync(f)).digest('hex');
 const hashes: Record<string, string> = {};
-for (const f of files) {
-  copyFileSync(path.join(src, f), path.join(dest, f));
-  hashes[f] = sha(path.join(dest, f));
-}
-if (existsSync(audition)) {
-  copyFileSync(audition, path.join(dest, 'approved-audition.m4a'));
-  hashes['approved-audition.m4a'] = sha(path.join(dest, 'approved-audition.m4a'));
-}
+const put = (from: string, to: string) => {
+  copyFileSync(from, path.join(part, to));
+  hashes[to] = sha(path.join(part, to));
+  if (hashes[to] !== sha(from)) throw new Error(`copy of ${to} does not match its source`);
+};
+for (const f of files) put(path.join(src, f), f);
+if (existsSync(audition)) put(audition, 'approved-audition.m4a');
 const approved = {
   video: id,
   take: name,
@@ -68,5 +72,6 @@ const approved = {
   engine: take.engine,
   files: hashes,
 };
-writeFileSync(path.join(dest, 'approved.json'), JSON.stringify(approved, null, 2) + '\n');
+writeFileSync(path.join(part, 'approved.json'), JSON.stringify(approved, null, 2) + '\n');
+renameSync(part, dest);
 console.log(`✓ ${path.relative(ROOT, dest)} (${Object.keys(hashes).length} files). Set narration.take = '${name}' in the spec, then run npm run voice -- ${id}.`);

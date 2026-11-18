@@ -45,8 +45,10 @@ export function treeHash(paths: readonly string[]): string {
 
 /** Everything the picture depends on besides the spec itself. */
 export const RENDER_INPUTS = ['src/remotion', 'src/brand', 'src/video', 'src/captions', 'public/fonts', 'public/textures', 'src/pipeline/settings.ts', 'src/pipeline/remotion.ts', 'package-lock.json'];
-/** Everything the mix depends on besides the spec and the narration audio. */
-export const MIX_INPUTS = ['src/sound', 'src/pipeline/sound', 'src/pipeline/audio.ts', 'src/pipeline/dsp.ts', 'src/video', 'assets/sound/manifest.json', 'package-lock.json'];
+/** Everything the mix depends on besides the spec and the narration audio. The sample WAVs
+ *  themselves, not only their manifest: a re-prepared sample must re-mix (Phase 2.5; the mix is
+ *  byte-identical when nothing changed, so this re-mixed once and changed no upload). */
+export const MIX_INPUTS = ['src/sound', 'src/pipeline/sound', 'src/pipeline/audio.ts', 'src/pipeline/dsp.ts', 'src/video', 'assets/sound', 'package-lock.json'];
 
 export type StepRecord = { key: string; seconds: number; cached: boolean; at: string; detail?: string };
 export type BuildManifest = { video: string; steps: Record<string, StepRecord> };

@@ -13,6 +13,8 @@ export const ease = {
   inOut: Easing.bezier(0.65, 0, 0.35, 1),
   /** Magnetic travel: hesitant start, decisive arrival — the "snap into place". */
   snap: Easing.bezier(0.7, 0, 0.12, 1),
+  /** Premium reveal and travel (opt-in `smooth` scenes): leaves from rest, long silk settle — no pop. */
+  glide: Easing.bezier(0.33, 0, 0.1, 1),
   linear: (t: number) => t,
 } as const;
 
@@ -56,4 +58,22 @@ export function mixColor(a: string, b: string, t: number): string {
   const k = Math.min(1, Math.max(0, t));
   const r = (i: number) => Math.round(lerp(x[i]!, y[i]!, k));
   return `rgba(${r(0)},${r(1)},${r(2)},${lerp(x[3], y[3], k).toFixed(3)})`;
+}
+
+/** A colour (hex or rgb/rgba) at the given alpha, e.g. a token as light: `withAlpha(palette.signal, 0.2)`. */
+export function withAlpha(c: string, a: number): string {
+  const [r, g, b] = parseColor(c);
+  return `rgba(${r},${g},${b},${Math.max(0, Math.min(1, a)).toFixed(4)})`;
+}
+
+/**
+ * Radial light with a smooth (smoothstep) falloff as CSS gradient stops: no visible edge where a
+ * linear falloff would reach zero (a Mach band), and no hard ring. `colour` at full alpha `a`.
+ */
+export function softRadial(colour: string, a: number, rx: number, ry: number, x: string, y: string): string {
+  const stops = [0, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9, 1].map((s) => {
+    const k = 1 - s * s * (3 - 2 * s);
+    return `${withAlpha(colour, a * k)} ${(s * 100).toFixed(0)}%`;
+  });
+  return `radial-gradient(${rx}px ${ry}px at ${x} ${y}, ${stops.join(', ')})`;
 }

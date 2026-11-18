@@ -12,6 +12,11 @@ export const RENDER = {
   /** Intermediate frame format: JPEG q95 is visually lossless and light on RAM/disk. */
   imageFormat: 'jpeg',
   jpegQuality: 95,
+  /**
+   * RGB → YUV with the BT.709 matrix, tagged (D40). Remotion 4's default is BT.601 with the
+   * matrix untagged: Chrome then showed the brand lime as 199,230,93 instead of 201,242,93.
+   */
+  colorSpace: 'bt709',
   /** Remotion's default `--gl` is fine for CSS-only scenes; keep explicit for determinism. */
   gl: 'swangle',
 } as const;

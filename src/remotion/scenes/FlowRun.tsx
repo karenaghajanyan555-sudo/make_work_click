@@ -24,7 +24,7 @@ import { useFontsReady } from '../lib/fonts.ts';
 import { useLayout, useTime } from '../lib/hooks.ts';
 import { Label, ToggleMark } from '../brand/Mark.tsx';
 import { CameraRig } from '../motion/Camera.tsx';
-import { ClickRipple, LightSweep } from '../motion/Signal.tsx';
+import { ClickRipple, LightSweep, SoftLight } from '../motion/Signal.tsx';
 import { palette, type } from '../../brand/tokens.ts';
 import { EmailDetailView, GoalDetailView, ScheduleDetailView } from '../ui/Details.tsx';
 import { Connector, FLOW_METRICS, NodeBody, nodeSurface, type ChipState } from '../ui/Flow.tsx';
@@ -131,8 +131,19 @@ export const FlowRun: React.FC<{ props: FlowRunProps; duration: number }> = ({ p
 
   // ---- camera: push in, hold (or breathe in on each step), pull back to exactly 1.0 ----
   const focus = FLOW_RUN_LAYOUT.zoom.focus;
+  const lean = FLOW_RUN_LAYOUT.zoom.lean;
   const camera: CameraKey[] =
-    props.camera === 'follow'
+    props.smooth && props.camera === 'follow'
+      ? [
+          // One glide: settle into focus, deepen a little with each step (never past the
+          // tested lean + lift), drift to alternating sides, then a single pull-back to 1.0.
+          { t: 0, zoom: 1.025, x: 0, y: 0 },
+          { t: b.push + T.pushTravel, zoom: focus, x: 0, y: 0 },
+          ...b.steps.map((st, j): CameraKey => ({ t: st.arrive + 0.75, zoom: focus + ((lean - focus) * (j + 1)) / b.steps.length, x: j % 2 === 0 ? -3 : 3, y: 6 })),
+          { t: b.pullBack, zoom: lean, x: 0, y: 6 },
+          { t: b.pullBack + T.pullBackTravel, zoom: FLOW_RUN_LAYOUT.zoom.overview, x: 0, y: 0 },
+        ]
+      : props.camera === 'follow'
       ? [
           { t: 0, zoom: 1.025, x: 0, y: 0 },
           { t: b.push + T.pushTravel, zoom: focus, x: 0, y: 0 },
@@ -171,16 +182,20 @@ export const FlowRun: React.FC<{ props: FlowRunProps; duration: number }> = ({ p
   }
 
   const sw = { x: END_CARD_LAYOUT.switchCx * u, y: END_CARD_LAYOUT.switchCy * u, h: END_CARD_LAYOUT.switchHeight * u };
-  const formed = progress(frame, f(b.converge + 0.08), f(T.converge - 0.08), ease.out);
+  const formed = progress(frame, f(b.converge + 0.08), f(T.converge - 0.08), props.smooth ? ease.glide : ease.out);
 
   return (
     <AbsoluteFill>
-      <AbsoluteFill
-        style={{
-          background: `radial-gradient(${900 * u}px ${520 * u}px at 50% ${(glowY / layout.height) * 100}%, rgba(201,242,93,${0.11 * mood}), transparent 70%)`,
-        }}
-      />
-      <CameraRig keys={camera} locked>
+      {props.smooth ? (
+        <SoftLight x={layout.width / 2} y={glowY} rx={900 * u} ry={560 * u} core={320 * u} bloom={mood} signal={mood * 0.85} />
+      ) : (
+        <AbsoluteFill
+          style={{
+            background: `radial-gradient(${900 * u}px ${520 * u}px at 50% ${(glowY / layout.height) * 100}%, rgba(201,242,93,${0.11 * mood}), transparent 70%)`,
+          }}
+        />
+      )}
+      <CameraRig keys={camera} locked smooth={props.smooth}>
         {collapse < 1 && (
           // No transform at rest: same rendering path as chaosToSystem's last frame (invisible cut).
           <div style={{ position: 'absolute', inset: 0, transform: collapse > 0 ? `translateY(${windowDrop}px) scale(${1 - collapse * 0.04})` : undefined, transformOrigin: '50% 40%' }}>
@@ -263,9 +278,11 @@ export const FlowRun: React.FC<{ props: FlowRunProps; duration: number }> = ({ p
           const memoW = lerp(memoWidth(todo), memoWidth(todo, todo.resolved), tagSwap) * u;
           const memo = { x: node.x, y: node.y + ((m.nodeHeight - MEMO.height) / 2) * u, w: memoW, h: MEMO.height * u };
           // Converge into the switch.
-          const c = progress(frame, f(b.converge + k * 0.05), f(T.converge - 0.15), ease.in);
-          const cx = lerp(memo.x + memo.w / 2, sw.x, c);
-          const cy = lerp(memo.y + memo.h / 2, sw.y, c);
+          // Smooth: a curved path (out, then up into the switch) that settles on arrival.
+          const c = progress(frame, f(b.converge + k * 0.05), f(T.converge - 0.15), props.smooth ? ease.glide : ease.in);
+          const [x0, y0] = [memo.x + memo.w / 2, memo.y + memo.h / 2];
+          const cx = props.smooth ? lerp(lerp(x0, sw.x, c), sw.x, c) : lerp(x0, sw.x, c);
+          const cy = props.smooth ? lerp(y0, lerp(y0, sw.y, c), c) : lerp(y0, sw.y, c);
           const cScale = lerp(1, 0.12, c);
           if (c >= 1) return null;
           const st = stepState(k);
@@ -341,7 +358,8 @@ export const FlowRun: React.FC<{ props: FlowRunProps; duration: number }> = ({ p
             position: 'absolute',
             left: sw.x - sw.h * 0.9,
             top: sw.y - sw.h / 2,
-            transform: `scale(${lerp(0.2, 1, formed)})`,
+            // scale(1) at rest, like the endCard's switch: same rendering path across the cut.
+            transform: `scale(${lerp(props.smooth ? 0.7 : 0.2, 1, formed)})`,
             opacity: Math.min(1, formed * 3),
           }}
         >

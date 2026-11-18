@@ -1,4 +1,4 @@
-import type { FlowStepKind } from '../../video/scenes/chaosToSystem.ts';
+import type { FlowStepIcon, FlowStepKind } from '../../video/scenes/chaosToSystem.ts';
 import type { NoticeIcon } from '../../video/scenes/product.ts';
 
 // Stroke icons drawn for this project (24px grid, round joins). Original artwork.
@@ -36,6 +36,14 @@ export const ReturnIcon: React.FC<IconProps> = (p) => (
   <Svg {...p}>
     <path d="M9 14L4 9l5-5" />
     <path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11" />
+  </Svg>
+);
+
+/** A payment card (a payment taken). */
+export const CardIcon: React.FC<IconProps> = (p) => (
+  <Svg {...p}>
+    <rect x="3" y="5.5" width="18" height="13" rx="2.6" />
+    <path d="M3 10h18M7 14.6h3.2" />
   </Svg>
 );
 
@@ -87,4 +95,10 @@ export const STEP_ICON: Record<FlowStepKind, React.FC<IconProps>> = {
   email: MailIcon,
   wait: ClockIcon,
   goal: ReturnIcon,
+};
+
+/** Opt-in step icons (`FlowStep.icon`), overriding the kind's icon. */
+export const STEP_ICON_OVERRIDE: Record<FlowStepIcon, React.FC<IconProps>> = {
+  card: CardIcon,
+  contact: UserPlusIcon,
 };

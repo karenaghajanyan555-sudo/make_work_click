@@ -25,7 +25,21 @@ sheets. Exit code 1 on any FAIL.
 | `visual.black` | No black stretch > 0.2 s |
 | `pacing.static` | No stretch without meaningful motion > 2.0 s (warn > 1.2 s). "Static" = frame difference within 0.08 of the video's own noise floor (5th percentile), so grain changes don't break it |
 | `render.deterministic` | The click frame rendered twice is byte-identical |
-Also unit tests (`npm run check`) include a safe-zone check of each scene's layout block.
+| `container.decode` | Every video frame and audio sample of the upload decodes without a decoder error (catches truncated or corrupt files that a header probe misses) |
+| `captions.timing` | Caption windows inside the video, in order, never two on screen at once (fail); each on screen ≥ max(0.5 s, 0.15 s × words) (warn) |
+| `visual.emptyScene` | Every scene has at least one frame with visible content (luma detail ≥ 6, the `hook.firstFrame` threshold) |
+| `assets.present` | The narration take files, the mix, fonts and textures the build read still exist |
+Also unit tests (`npm run check`) include a safe-zone check of each scene's layout block
+(safe areas are checked there and on `sheet-safezone.png`, not re-measured on the upload).
+`report.json` records the sha256 of the file it checked; the orchestrator refuses a report
+for any other file.
+
+## Gate 1b — editorial QA (orchestrator productions)
+A separate, structured report on the story (`out/<id>/qa/editorial.md|json`, stage
+`editorial`, docs/ORCHESTRATOR.md): hook, clarity, progression, repetition, pacing, visual
+variety, unsupported claims, CTA, brand consistency, each as ok / look / problem with the
+measured value and its rule. It informs Gate 2 and the owner's decision; it never approves
+and never blocks a job.
 `npm run make` runs this gate as its last step (after voice → render → mix → deliver).
 
 Determinism, measured: a frame rendered twice in one browser session is byte-identical (the
@@ -48,7 +62,13 @@ Answer each in writing in the session report; any "no" means fix and re-run.
 5. **Composition:** One focal point per moment; critical content inside the safe zone; no
    two text layers stacked during transitions.
 6. **Motion:** Every movement has a reason; no bounce; transitions physical, not crossfades
-   of light-over-dark; nothing passes through muddy grey; no dead air.
+   of light-over-dark; nothing passes through muddy grey; no dead air. Step through camera
+   moves and reveals every 2nd frame: no stop-start at keys, no zoom pumping in and out, no
+   word that appears in 1–2 frames (D40). Type under a camera push must glide, not step:
+   track a headline edge frame by frame — no 1 px jumps after still frames (D41).
+6b. **Light quality (D40):** crop the light and the dark ground from the **upload file** at
+   1:1 with ×4 contrast: no hue rings, no blocks, no visible edge where a glow ends.
+   `video.colour` must pass (BT.709 tagged) on new renders.
 7. **Continuity:** Light, colour meaning (lime = system, coral = before) and spec frame
    consistent across scenes; chapter labels match the story.
 8. **Generic check:** Would this frame be mistaken for a stock template or another brand?
@@ -56,6 +76,33 @@ Answer each in writing in the session report; any "no" means fix and re-run.
 9. **Sound:** narration intelligible over music on phone speakers; click audible; every
    effect lands on its visual (stems in `out/<id>/mix/stems/` help); levels within
    `docs/SOUND.md` targets.
-10. **Honesty:** Fictional, unbranded UI; no claims about real products; no affiliate links.
+10. **Honesty:** Fictional, unbranded UI; no links. Knowledge videos name no partner
+    (validation). Affiliate videos (D42, docs/STORY.md § Affiliate videos): the "Ad" tag is
+    readable on the last frames at phone size; covering the end card, the video still teaches
+    something complete; every partner fact matches its claim bank and the live page today.
+
+## Gate 3 — the affiliate publishing package (owner's rule, 2026-11-18; D44)
+Every affiliate video. `npm run verify-affiliate -- <id>` then `npm run publish-pack -- <id>`;
+the pack refuses unless a run from the last 7 days supports every claim and passes every link test.
+
+| # | Requirement | Where it comes from | Checked by |
+|---|---|---|---|
+| 1 | Every product claim against official documentation | `spec.affiliate.claims` → claim bank `content/affiliate/<partner>.ts` (quote + URL) | the run: quote on the live page, its passage covers the claim (orchestrator `assessClaim`); blocks |
+| 2 | Affiliate URL verified, ID preserved | links built from `src/brand/partners.ts` only; link rules in the record | the run: HTTP status, redirects, parameters kept, the partner's affiliate cookie holds our ID; a control without parameters sets none; blocks |
+| 3 | One tracking link per platform, supported parameters only | `tracking` in the record (systeme.io: `tk`, documented) | the run: tag cookie per platform; blocks |
+| 4 | Commission + payout | `program` facts | the run re-reads each quote |
+| 5 | Instagram + TikTok commercial disclosure, the law | `src/publishing/platforms.ts`, `DISCLOSURE_LAW` | the run (raw / rendered pages; `manual` ones dated, flagged after 30 days) |
+| 6 | AI-generated content disclosure | `platforms.ts` `ai` facts | the run |
+| 7 | Free-plan limits, payment processor requirements | `plan` facts (`configure` = setup the buyer must do) | the run |
+| 8 | Illustrative vs real interfaces | scene types (`CAPTURE_SCENE_TYPES` is empty: all UI is fictional); the caption line is added when missing | the pack |
+| 9 | Per-platform captions + bio | `<platform>/caption.txt`, `bio.txt`, `link.txt`, each within that platform's limit | the pack; blocks |
+| 10 | Post-publication analytics | metric names from the platforms' help pages + `analytics.csv` | the pack |
+
+Labels: **Verified** (official source, dated by the run or "by hand"), **Tested** (only from the
+run's own record), **Confirm in your account**, **Needs configuration**, **Unverified**. A fact
+the run could not re-confirm is printed "NOT re-confirmed" and listed under re-check flags.
+A test request may count as a click in the affiliate stats; no form is ever submitted, no sign-up
+is attempted (self-referral is excluded by the partner's terms), so credit for a sign-up is
+always listed as unverified.
 
 Record the outcome and any accepted compromises in `docs/STATUS.md`.

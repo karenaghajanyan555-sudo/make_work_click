@@ -5,7 +5,7 @@
  * Needs out/<id>/<id>.master.mp4 (npm run render) and the mix (npm run mix).
  * `npm run build -- <id>` runs render → mix → deliver.
  */
-import { existsSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, renameSync, rmSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { getVideo } from '../content/index.ts';
 import { fileHash, recordStep, sha256, upToDate } from '../src/pipeline/cache.ts';
@@ -31,7 +31,12 @@ if (!process.argv.includes('--force') && upToDate(id, 'deliver', key, deliveryPa
   recordStep(id, 'deliver', { key, seconds: 0, cached: true });
   console.log(`✓ ${deliveryPath(id)}  unchanged (cached)`);
 } else {
-  const { seconds } = await deliver(masterPath(id), hasAudio ? mixPath(id) : null, deliveryPath(id), path.join(videoOut(id), 'deliver'), { crf });
+  // Encode beside the upload, then rename: an interrupted encode never leaves a truncated
+  // upload, and a file someone already hard-linked keeps its bytes (a new inode replaces it).
+  const part = `${deliveryPath(id)}.part.mp4`;
+  rmSync(part, { force: true });
+  const { seconds } = await deliver(masterPath(id), hasAudio ? mixPath(id) : null, part, path.join(videoOut(id), 'deliver'), { crf });
+  renameSync(part, deliveryPath(id));
   const mb = statSync(deliveryPath(id)).size / 1e6;
   recordStep(id, 'deliver', { key, seconds, cached: false, detail: `${mb.toFixed(1)} MB, CRF ${crf}` });
   console.log(`✓ ${deliveryPath(id)}  ${mb.toFixed(1)} MB  (CRF ${crf}, AAC ${DELIVERY.audioBitrateK}k)  ${seconds.toFixed(1)} s`);

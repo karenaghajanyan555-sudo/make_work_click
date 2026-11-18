@@ -13,7 +13,7 @@
 import { mkdirSync } from 'node:fs';
 import path from 'node:path';
 import { readWav, writeWav } from './audio.ts';
-import { ff } from './ffmpeg.ts';
+import { ff, probe } from './ffmpeg.ts';
 
 export const DELIVERY = {
   crf: 20,
@@ -43,12 +43,16 @@ export async function deliver(master: string, mixWav: string | null, out: string
     input = ['-i', tmp];
     audio = ['-map', '1:a:0', '-c:a', 'libfdk_aac', '-b:a', `${DELIVERY.audioBitrateK}k`, '-ar', String(DELIVERY.sampleRate), '-ac', '2'];
   }
+  // Keep the master's colour tags (BT.709 since D40; older masters stay untagged as before).
+  const mv = (await probe(master)).streams.find((st) => st.codec_type === 'video');
+  const colour = mv?.color_space === 'bt709' ? ['-colorspace', 'bt709', '-color_primaries', 'bt709', '-color_trc', 'bt709', '-color_range', 'tv'] : [];
   const r = await ff('ffmpeg', [
     '-hide_banner', '-y', '-v', 'error',
     '-i', master, ...input,
     '-map', '0:v:0',
     '-c:v', 'libx264', '-preset', DELIVERY.preset, '-profile:v', 'high', '-crf', String(opts.crf ?? DELIVERY.crf), '-pix_fmt', 'yuv420p',
     '-x264-params', DELIVERY.x264,
+    ...colour,
     ...audio,
     // No edit lists (YouTube). Negative composition offsets keep the first video frame at
     // t = 0 despite B-frame reordering (otherwise video starts 2 frames late: measured).

@@ -53,6 +53,7 @@ export async function renderVideo(
     codec: RENDER.codec,
     crf: RENDER.crf,
     pixelFormat: RENDER.pixelFormat,
+    colorSpace: RENDER.colorSpace,
     imageFormat: RENDER.imageFormat,
     jpegQuality: RENDER.jpegQuality,
     concurrency: RENDER.concurrency,

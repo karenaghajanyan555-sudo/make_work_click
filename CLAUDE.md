@@ -85,8 +85,25 @@ These rules are hard rules. If a request conflicts with one, say so before actin
 - Human approval before anything is published. Nothing auto-publishes.
 - Do not commit or push unless the user asks in this session.
 - Stop at the approval gates in `docs/STATUS.md`; show real rendered results.
-- No fake demos of real products, no affiliate links, no real brand names or logos in
-  product UI. Businesses, people and apps shown are fictional and unbranded.
+- No fake demos of real products, no real brand names or logos in product UI. Businesses,
+  people and apps shown are fictional and unbranded.
+- Most videos are knowledge videos: no partner, no link, no change. Affiliate videos (the
+  owner's decision, 2026-11-17, D42) promote only an approved partner (`src/brand/partners.ts`)
+  and only through `spec.affiliate`, which adds the disclosure (end-card "Ad" tag, caption's
+  first line, platform settings on the post sheet). Never drop or hide it: the TikTok toggle,
+  Instagram's paid partnership label and an in-video disclosure are required (FTC, platform
+  policies: `docs/PLATFORMS.md`). Teach first: the video must be worth watching without the
+  end card; the partner appears only there (and in the post copy); the link only in the bio.
+  Claims about a partner only from its research doc's claim bank, re-checked on the live page.
+- Every affiliate video ships a **publishing package** (docs/QA.md § Gate 3, owner's rule
+  2026-11-18): claims re-verified against official pages, the affiliate URL tested with the ID
+  kept, one tracking link per platform (documented parameters only), commission + payout terms,
+  current Instagram/TikTok commercial and AI disclosure rules, free-plan limits + payment
+  requirements, illustrative vs real interfaces, per-platform captions and bio, an analytics
+  checklist. Every line is labelled Verified / Confirm in your account / Needs configuration /
+  Unverified. Never write that a URL, tracking, setting or integration was tested unless a run
+  tested it (`npm run verify-affiliate` records it). A human must be able to post from it
+  without researching anything again.
 - End every working session by updating `docs/STATUS.md`.
 
 ## Doc map
@@ -101,6 +118,7 @@ These rules are hard rules. If a request conflicts with one, say so before actin
 | `docs/SOUND.md` | Narration, music, SFX, levels. |
 | `docs/QA.md` | Before presenting any render. |
 | `docs/PLATFORMS.md` | Delivery specs, safe zones, licences (verified, with sources). |
+| `docs/ORCHESTRATOR.md` | The production orchestrator: stages, database, Control Center, kits + arcs. |
 | `docs/DECISIONS.md` | Why things are the way they are; dependency + asset ledger. |
 
 ## Making a video (the engine workflow)
@@ -117,7 +135,33 @@ These rules are hard rules. If a request conflicts with one, say so before actin
 5. `npm run make -- <id>` → render (only changed scene segments), mix, deliver, QA.
    Review the QA sheets and listen; fix and re-run (unchanged steps are skipped).
 6. With the user: approve the take (`npm run approve-take -- <id> draft`, set
-   `narration.take`, `npm run voice`), add `publish` copy, `npm run publish-pack -- <id>`.
+   `narration.take`, `npm run voice`), add `publish` copy, `npm run publish-pack -- <id>`
+   (affiliate videos: `npm run verify-affiliate -- <id>` first; the pack refuses without it).
+
+## Producing from an idea (the orchestrator)
+
+`npm run control` → http://127.0.0.1:4318: add an idea, Start production, review, approve.
+The runner calls the engine stage by stage (docs/ORCHESTRATOR.md) and stops at the human
+gates; nothing posts. Rules:
+- The orchestrator never re-implements the engine. New production behaviour is a stage or
+  a stage input; new visual behaviour is still an opt-in prop of a library scene.
+- A stage reads only what its `input()` returns (it is hashed). Adding a read anywhere else
+  breaks reuse: add it to the input.
+- Stories come from **story kits** (`content/kits/`) and **arcs** (`src/orchestrator/
+  storyboard.ts`). A new category = a new kit (fictional world, line variants with word
+  pins, scene material, post copy, assumptions, references with exact quotes) + its tests.
+  Never put a fact in a kit line unless it cites a reference research can verify.
+- `content/productions/` and its timing locks are generated: change the idea, script or
+  storyboard in the Control Center and re-run; never edit the file.
+- Approval binds to the upload file's sha256; a failed QA can never be approved. Editorial
+  QA informs, it never approves or blocks.
+- A fact is stated only if research found it **supported** (exact quote + the claim's terms
+  in the passage); partial / unverified / contradicted pause for script review. Word a kit
+  claim to what its source actually says.
+- Every output is written beside its target and renamed into place when complete; approved
+  outputs are copies, never hard links; earlier approved packages are archived, not deleted.
+- Tests use `:memory:` or temp databases (openDb refuses `data/studio.db` under node --test);
+  `npm run test:e2e` runs the whole pipeline in a throwaway copy of the repo.
 
 ## Commands
 
@@ -137,7 +181,18 @@ npm run mix -- <id>                   # final audio → public/generated/<id>/mi
 npm run deliver -- <id>               # master + mix → upload file
 npm run qa -- <id> [--no-render]      # QA gate (builds first unless --no-render) → out/<id>/qa/
 npm run publish-pack -- <id>          # cover + post sheet → out/<id>/publish/ (posts nothing)
+npm run verify-affiliate -- <id>      # affiliate videos, before publish-pack: claims, facts, link tests → verification.json
 npm run voices -- <id>                # narrator audition → out/<id>/voices/
 npm run approve-take -- <id> <label>  # freeze an audition take (or `draft`) → public/narration/<id>/take-NN/
 npm run profile -- <label> -- <cmd>   # wall time + peak memory of any command (Linux)
+npm run control [-- --port 4318]      # Production Control Center (dashboard + runner)
+npm run produce -- idea add|list|discover|set …   # idea registry
+npm run produce -- start <ideaId> [--run] [--review-script] [--fail-once <stage>]
+npm run produce -- run [<jobId>] | status [<jobId>] | resume|retry|rerun|cancel <jobId>
+npm run produce -- stage <jobId> <stage> [--force]  # one stage, upstream outputs kept
+npm run produce -- approve|revise|reject <jobId> [--notes N] [--script]
+npm run produce -- edit-line <jobId> <lineId> --text T [--caption C] [--pause S]
+npm run produce -- batch <ideaId>… [--run] | publish <jobId> … | metrics <pubId> … | insights
+npm run db -- backup [file] | list | check | restore <file>   # production database (restore: stop the Control Center first)
+npm run test:e2e [-- --keep]          # full pipeline in a throwaway repo copy (~10 min, one real render)
 ```

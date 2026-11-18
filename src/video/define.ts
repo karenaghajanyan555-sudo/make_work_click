@@ -9,6 +9,7 @@
  * so Studio can still preview a storyboard before the voice exists.
  */
 import { FORMATS } from '../brand/format.ts';
+import { applyAffiliate } from './affiliate.ts';
 import type { NarrationLine, NarrationSpec } from './narration.ts';
 import { sceneModel } from './scenes/registry.ts';
 import type { SceneSpec, VideoSpec } from './spec.ts';
@@ -133,7 +134,8 @@ export function defineVideo(v: AuthoredVideo, lock?: TimingLock): VideoSpec {
   });
 
   const { scenes: _s, narration: _n, ...rest } = v;
-  return { ...rest, scenes, ...(narration ? { narration } : {}), ...(issues.length ? { timingIssues: issues } : {}) };
+  // Affiliate videos: the disclosure on the end card (no-op otherwise: src/video/affiliate.ts).
+  return applyAffiliate({ ...rest, scenes, ...(narration ? { narration } : {}), ...(issues.length ? { timingIssues: issues } : {}) });
 }
 
 function sceneMin(s: AuthoredScene): number {

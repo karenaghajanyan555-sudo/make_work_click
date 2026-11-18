@@ -21,6 +21,8 @@ import { validateNarration, type NarrationSpec } from './narration.ts';
 import type { ComposePlan } from '../sound/compose.ts';
 import type { ScoreSpec } from '../sound/score.ts';
 import { validatePublish, type PublishSpec } from './publish.ts';
+import { partnerOf, validateAffiliate, type AffiliateSpec } from './affiliate.ts';
+import { isPartnerId } from '../brand/partners.ts';
 
 /**
  * Scene hand-offs. `cut` and `focusPull` are the v001 language; the rest serve the presets:
@@ -94,6 +96,12 @@ export type VideoSpec = {
   export?: { crf?: number };
   /** Post copy + cover moment (src/video/publish.ts). Required before a video is final. */
   publish?: PublishSpec;
+  /**
+   * Affiliate videos only (opt-in, D42): the paid partner (src/brand/partners.ts). Adds the
+   * disclosure on the end card, in the caption and on the post sheet; without it no partner
+   * may be named anywhere in the video (src/video/affiliate.ts).
+   */
+  affiliate?: AffiliateSpec;
   /** Set by defineVideo(): timing problems (stale or missing timing lock). */
   timingIssues?: string[];
 };
@@ -139,7 +147,10 @@ export function validateSpec(spec: VideoSpec): string[] {
   errors.push(...(spec.timingIssues ?? []));
   // Scene durations summed: an upper bound on the length (hand-offs overlap a few frames).
   // publish-pack re-checks the cover frame against the exact timeline.
-  if (spec.publish) errors.push(...validatePublish(spec.publish, spec.scenes.reduce((s, sc) => s + sc.duration, 0)));
+  // An affiliate video names its partner in the post copy ("systeme.io" looks like a link).
+  const named = spec.affiliate && isPartnerId(spec.affiliate.partner) ? [partnerOf(spec.affiliate).name] : [];
+  if (spec.publish) errors.push(...validatePublish(spec.publish, spec.scenes.reduce((s, sc) => s + sc.duration, 0), named));
+  errors.push(...validateAffiliate(spec));
   if (spec.status === 'final' && !spec.publish) errors.push('a final video needs publish copy (publish)');
   if (spec.status === 'final' && spec.narration && !spec.narration.take) errors.push('a final video needs an approved narration take');
   return errors;

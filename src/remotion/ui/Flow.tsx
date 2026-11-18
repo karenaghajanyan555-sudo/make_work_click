@@ -2,7 +2,7 @@ import { fonts, palette, radius, type } from '../../brand/tokens.ts';
 import { CHAOS_TO_SYSTEM_LAYOUT, type FlowStep } from '../../video/scenes/chaosToSystem.ts';
 import { lerp, mixColor } from '../lib/anim.ts';
 import { Spinner } from '../motion/Signal.tsx';
-import { CheckIcon, STEP_ICON } from './icons.tsx';
+import { CheckIcon, STEP_ICON, STEP_ICON_OVERRIDE } from './icons.tsx';
 
 /**
  * Product-world UI kit for automation flows. Fictional, unbranded app; no OS chrome.
@@ -56,7 +56,7 @@ export const NodeBody: React.FC<{ step: FlowStep; chip: ChipState; chipLabel: st
   u,
   pop,
 }) => {
-  const Icon = STEP_ICON[step.kind];
+  const Icon = step.icon ? STEP_ICON_OVERRIDE[step.icon] : STEP_ICON[step.kind];
   const done = chip === 'done';
   const m = FLOW_METRICS;
   return (

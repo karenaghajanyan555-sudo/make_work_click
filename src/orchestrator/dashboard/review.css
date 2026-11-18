@@ -1,0 +1,115 @@
+/* Review — the Control Center's home. One job: watch the videos and decide.
+   Brand surface: ink ground, paper type, serif display, mono labels. Lime only where the
+   system did something (checks passed, packaged); coral only for failures. Colours from /tokens.css. */
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--ink); color: var(--paper); font: 15px/1.55 var(--sans); -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 0 32px; }
+
+/* ---- top bar ---- */
+.top { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--ink) 92%, transparent); border-bottom: 1px solid var(--hairline); }
+.top-row { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 640; font-size: 13px; letter-spacing: -0.01em; }
+.switch { width: 30px; height: 18px; border-radius: 9px; background: var(--signal); position: relative; }
+.switch span { position: absolute; right: 2px; top: 2px; width: 14px; height: 14px; border-radius: 50%; background: var(--signal-ink); }
+.quiet { color: var(--fog); text-decoration: none; font-size: 13px; }
+.quiet:hover { color: var(--paper); }
+
+/* ---- hero ---- */
+.hero { padding: 64px 0 28px; }
+.hero h1 { font: 400 60px/1.02 var(--serif); letter-spacing: -0.025em; margin: 0; max-width: 19ch; text-wrap: balance; }
+.hero h1 em { font-style: italic; color: var(--fog); }
+.hero p { color: var(--fog); margin: 16px 0 0; max-width: 54ch; }
+
+/* ---- sections ---- */
+section { margin-top: 56px; }
+.label { display: flex; align-items: baseline; gap: 10px; font: 500 11px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--fog); padding-bottom: 14px; border-bottom: 1px solid var(--hairline); margin-bottom: 22px; }
+.label b { color: var(--paper); font-weight: 500; }
+.lede { color: var(--fog); font-size: 14px; margin: -8px 0 22px; max-width: 64ch; }
+.stack { display: grid; gap: 22px; }
+
+/* ---- video ---- */
+video { display: block; width: 100%; aspect-ratio: 9 / 16; background: var(--ink); border-radius: 16px; border: 1px solid var(--hairline); }
+.missing { display: grid; place-items: center; width: 100%; aspect-ratio: 9 / 16; border-radius: 16px; border: 1px dashed var(--hairline-strong); color: var(--smoke); font-size: 13px; }
+
+/* ---- decision card ---- */
+.decide { display: grid; grid-template-columns: 300px 1fr; gap: 36px; padding: 22px; background: var(--graphite); border: 1px solid var(--hairline); border-radius: 22px; }
+.decide .info { display: flex; flex-direction: column; min-width: 0; }
+.meta { font: 12px/1.5 var(--mono); color: var(--fog); display: flex; gap: 14px; flex-wrap: wrap; }
+.meta a { color: var(--fog); }
+.meta a:hover { color: var(--paper); }
+.title { font: 400 40px/1.05 var(--serif); letter-spacing: -0.02em; margin: 10px 0 18px; }
+.checks { display: grid; gap: 8px; }
+.check { display: flex; gap: 10px; align-items: baseline; font-size: 14px; }
+.dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--signal); transform: translateY(-1px); }
+.dot.bad { background: var(--friction); }
+.dot.look { background: var(--fog); }
+.dot.ok { background: var(--paper); }
+.dot.open { background: transparent; box-shadow: inset 0 0 0 1.5px var(--fog); }
+.check .sm { color: var(--fog); font-size: 13px; }
+.decide .say { margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--hairline); }
+.decide .say .sec, .tile .version { font: 500 10.5px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--smoke); margin-bottom: 10px; }
+.decide .say p { margin: 0 0 6px; color: var(--fog); font-size: 14.5px; line-height: 1.5; }
+.tile .version { margin: 16px 0 -6px; }
+.act { margin-top: auto; padding-top: 28px; }
+textarea { display: block; width: 100%; min-height: 76px; resize: vertical; font: 14px/1.45 var(--sans); color: var(--paper); background: var(--ink); border: 1px solid var(--hairline-strong); border-radius: 12px; padding: 12px 14px; }
+textarea:focus { outline: none; border-color: var(--paper); }
+textarea.need { border-color: var(--friction); }
+textarea::placeholder { color: var(--smoke); }
+.buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+button { font: 500 14px/1 var(--sans); border-radius: 11px; padding: 12px 18px; border: 1px solid var(--hairline-strong); background: transparent; color: var(--paper); cursor: pointer; transition: border-color 0.15s, background 0.15s, opacity 0.15s; }
+button:hover { border-color: var(--paper); }
+button.primary { background: var(--paper); border-color: var(--paper); color: var(--ink); }
+button.primary:hover { opacity: 0.9; }
+button.ghost { border-color: transparent; color: var(--fog); }
+button.ghost:hover { color: var(--paper); border-color: var(--hairline-strong); }
+button.armed { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+button:disabled { opacity: 0.4; cursor: default; }
+.fine { color: var(--smoke); font-size: 12.5px; margin: 12px 0 0; }
+
+/* ---- script card ---- */
+.script { padding: 26px 28px; background: var(--graphite); border: 1px solid var(--hairline); border-radius: 22px; }
+.script .title { font-size: 30px; margin: 8px 0 16px; }
+.warn { display: flex; gap: 10px; align-items: baseline; padding: 12px 14px; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--friction) 40%, transparent); margin-bottom: 18px; font-size: 14px; }
+.lines { display: grid; gap: 0; margin: 0 0 6px; }
+.line { display: grid; grid-template-columns: 110px 1fr; gap: 16px; padding: 11px 0; border-top: 1px solid var(--hairline); }
+.line:first-child { border-top: 0; }
+.line .sec { font: 500 10.5px/1.9 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--smoke); }
+.line .say { font-size: 17px; line-height: 1.45; }
+
+/* ---- grids of smaller video cards ---- */
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.tile .name { font: 400 22px/1.15 var(--serif); letter-spacing: -0.01em; margin: 14px 0 8px; }
+.tile .checks { gap: 6px; margin-top: 10px; }
+.tile .check { font-size: 13px; }
+.tile a.btnlink { display: inline-block; margin-top: 12px; font-size: 13px; color: var(--paper); }
+
+/* ---- working rows ---- */
+.work { display: grid; grid-template-columns: 1fr auto; gap: 8px 18px; align-items: center; padding: 16px 20px; background: var(--graphite); border: 1px solid var(--hairline); border-radius: 16px; }
+.work .name { font: 400 22px/1.2 var(--serif); }
+.work .step { color: var(--fog); font-size: 13.5px; }
+.work .step.bad { color: var(--friction); }
+.bar { grid-column: 1 / -1; height: 3px; border-radius: 2px; background: var(--hairline); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--paper); border-radius: 2px; transition: width 0.6s ease; }
+.bar.run i { animation: breathe 1.6s ease-in-out infinite; }
+@keyframes breathe { 50% { opacity: 0.45; } }
+
+/* ---- empty + toast ---- */
+.empty { color: var(--smoke); padding: 28px; text-align: center; border: 1px dashed var(--hairline-strong); border-radius: 16px; }
+.toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); background: var(--paper); color: var(--ink); padding: 12px 18px; border-radius: 12px; font-weight: 500; font-size: 14px; max-width: min(520px, calc(100vw - 32px)); box-shadow: 0 10px 40px color-mix(in srgb, var(--ink) 70%, transparent); }
+.toast.err { background: var(--friction); }
+footer { margin: 80px 0 48px; color: var(--smoke); font-size: 12.5px; }
+
+@media (max-width: 900px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 720px) {
+  .wrap { padding: 0 16px; }
+  .hero { padding-top: 40px; }
+  .hero h1 { font-size: 42px; }
+  .decide { grid-template-columns: 1fr; gap: 20px; padding: 16px; }
+  .decide video, .decide .missing { max-width: 340px; margin: 0 auto; }
+  .title { font-size: 32px; }
+  .grid { grid-template-columns: 1fr; }
+  .line { grid-template-columns: 1fr; gap: 2px; }
+}

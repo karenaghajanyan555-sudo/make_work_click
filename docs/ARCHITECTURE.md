@@ -24,14 +24,21 @@ computeTimeline(spec, fps)                                  src/video/timeline.t
               sfx    each scene model's sounds + spec extras → effect library → short reverb
               → master limiter → −14 LUFS
 
-npm run make -- <id>      (each step is also its own command; unchanged steps are skipped)
+npm run make -- <id>      (each step is also its own command; unchanged steps are skipped;
+                           every output is written beside its target and renamed when complete)
   voice    take → content/timing/<id>.ts                       scripts/voice.ts
   render   per-scene segments (cached) → <id>.master.mp4       scripts/render.ts, src/pipeline/segments.ts
   mix      → public/generated/<id>/mix.wav (+ stems, report)   scripts/mix.ts
   deliver  master + mix → out/<id>/<id>.mp4 (upload file)      scripts/deliver.ts
   qa       ffprobe/loudness/sync/visual checks + review sheets scripts/qa.ts
 npm run publish-pack -- <id>  → out/<id>/publish/ (cover, post sheet; posts nothing)
+  affiliate videos: npm run verify-affiliate -- <id> first (claims, facts, link tests →
+  verification.json); the pack then writes the 10-section publishing package (docs/QA.md § Gate 3)
 human review → approval (docs/STATUS.md) → a person uploads
+
+npm run control / npm run produce   idea → research → brief → script → storyboard → voice →
+                                    assets → spec → render → QA → approval → package
+                                    (src/orchestrator/, docs/ORCHESTRATOR.md: drives the steps above)
 ```
 
 **Cue points are the sync backbone.** A scene type exposes named moments (`click`,
@@ -54,6 +61,9 @@ already defines.
 | Rendering | `src/remotion/` | React/Remotion: brand components, motion, UI kit, scene renderers. |
 | Pipeline | `src/pipeline/` | Node: narration cache, render sessions + segments, build cache, bundled ffmpeg, DSP + mix, delivery, QA, sheets. |
 | Pipeline inputs | `assets/` | Files the pipeline reads but the browser never loads (sound samples). |
+| Publishing | `src/publishing/`, `content/affiliate/` | Affiliate publishing package (pure): fact model with statuses (`model.ts`), Instagram/TikTok rules + FTC facts with sources (`platforms.ts`), partner records + per-platform links (`partner.ts`, data in `content/affiliate/<partner>.ts`; a fact's opt-in `pages` scopes it to the videos whose `spec.affiliate.page` matches, `recordForPage`, D45), the package builder (`package.ts`). Outside every cache key: a re-check never re-renders. `scripts/verify-affiliate.ts` (an orchestrator-side CLI: it reuses `assessClaim`) writes the run; `publish-pack` reads it like a QA report. |
+| Orchestrator | `src/orchestrator/` | Production around the engine (docs/ORCHESTRATOR.md): SQLite store (schema 2, `tx`, backups: `npm run db`), 13 stages, runner (lease + heartbeat, recovery), Control Center. Pure parts (writer, arcs, assemble, scoring, kit helpers, research support check, editorial QA, package copy) are unit-tested; it calls the pipeline and scripts, never the reverse. |
+| Story kits, productions | `content/kits/`, `content/productions/` | Category material for the writer; generated specs (do not edit). |
 | CLIs | `scripts/` | Thin entry points over the pipeline. |
 
 Pure TS (`src/brand`, `src/video`, `src/captions`, `src/sound`, `content`) never imports React
@@ -74,6 +84,7 @@ type`, `.ts` extensions, no enums/namespaces).
 | `score` / `audio.compose` | Hand-written score, or a composer plan (harmony + sections on cues). `audio.sfx: false` mutes effects. |
 | `export` | Delivery overrides (`crf`). |
 | `publish` | Cover moment, title, caption, hashtags. |
+| `affiliate` | Opt-in (D42): `{ partner, page? }` from `src/brand/partners.ts`. `defineVideo` puts the "Ad" tag on the end card (and holds it ≥ 2.4 s); `postText` leads the caption with the disclosure; publish-pack adds the bio link + platform settings. Without it no partner may be named anywhere (`src/video/affiliate.ts`). |
 
 `defineVideo(spec, lock)` resolves everything to seconds: lines at the take's rhythm (+
 `pause`), scene starts 0.35 s (or `lead`) before their first line, durations up to the next
@@ -91,18 +102,19 @@ layout block) and a renderer. Beats default from the duration; any beat can be a
 | HookScene | `hook` | Open on the problem: headline over the scattered to-dos it causes. | `headline`, `eyebrow?`, `fragments[]` (≤7), `align?` | `start headline out` |
 | ProblemScene | `problem` | The pain piling up: messages stack, a coral counter climbs. | `items[]` (2–6: `text`, `meta?`, `tag?`), `counter?` | `item0..n` |
 | StatementScene | `statement` | One line, said big; section openers, the thesis. | `text`, `label?`, `support?`, `align?`, `role?` | `start text support out` |
-| AutomationScene | `chaosToSystem` | Manual chaos becomes a system: to-dos line up, flip into flow steps, the switch clicks on. | `headline`, `resolution`, `workspace`, `fragments[]`, `flow[]` | `start hookOut gather aligned flip0..n flipped click run step1..n` |
-| WorkflowScene | `flowRun` | The automation runs: each step shows what it did; the to-dos are checked off and converge into the switch. | `workspace`, `flow[]`, `details[]` (email / wait / goal), `resolved[]`, `beats`; opt-in `camera: 'follow'`, `glow: 'follow'`, `stamp`, `trails`, email `mergeField`/`opened`, goal `amount` | `push trigger arrive1..n open1..n done1..n dayI_K loop pullBack resolve flipBack0..n check0..n converge formed` (+ `merge1 opened1 order3 stamp`) |
+| AutomationScene | `chaosToSystem` | Manual chaos becomes a system: to-dos line up, flip into flow steps, the switch clicks on. | `headline`, `resolution`, `workspace`, `fragments[]`, `flow[]`; opt-in `smooth` (one camera path, soft light); a flow step's opt-in `icon` (`card`: a payment step, v008; `contact`: a contact added to a list or pipeline stage, v009) overrides its kind's icon | `start hookOut gather aligned flip0..n flipped click run step1..n` |
+| WorkflowScene | `flowRun` | The automation runs: each step shows what it did; the to-dos are checked off and converge into the switch. | `workspace`, `flow[]`, `details[]` (email / wait / goal), `resolved[]`, `beats`; opt-in `camera: 'follow'`, `glow: 'follow'`, `stamp`, `trails`, `smooth` (follow camera as one glide, soft light, curved converge), email `mergeField`/`opened`, goal `amount` | `push trigger arrive1..n open1..n done1..n dayI_K loop pullBack resolve flipBack0..n check0..n converge formed` (+ `merge1 opened1 order3 stamp`) |
 | DashboardScene | `dashboard` | The product at work: live metrics climb as each row is handled. | `workspace`, `metrics[]` (1–3), `listTitle`, `rows[]` (1–4) | `open row0..n settled` |
 | NotificationScene | `notifications` | The system reports back: notices land, one opens into what was done. | `items[]` (1–4), `expand?` `{index, rows[]}` | `notice0..n expand` |
 | TimelineScene | `timeline` | Things happen in order: a playhead runs the plan; a stamp says it was sent. | `title`, `events[]` (2–5), `stamp?` | `event0..n done stamp` |
 | ComparisonScene | `comparison` | By hand vs by system, switched by the brand click (the panel flips). | `before`, `after` (`label`, `items[]`, `stat?`) | `before click after0..n` |
 | DataScene | `data` | The result in numbers: metrics count up, a chart draws, the system's bar lights. | `metrics[]` (1–3), `chart?` (bar/line, `highlight`, `callout`), `note?` | `metrics chart peak callout` |
 | PayoffScene | `payoff` | The resolution: the to-dos checked off one by one, then the line. | `items[]` (1–5, `resolved`), `statement?` | `check0..n statement` |
-| BrandOutroScene | `endCard` | The lockup every video ends on: click, wordmark, CTA. | `cta`, `switchHandedOver?`, `burst?` | `start click wordmark cta` |
+| BrandOutroScene | `endCard` | The lockup every video ends on: click, wordmark, CTA. | `cta`, `switchHandedOver?`, `burst?`, `smooth?` (soft bloom, wordmark rises into focus, holds still), `disclosure?` (affiliate videos only, set from `spec.affiliate`: the "Ad" tag under the CTA, outside the camera layer) | `start click wordmark cta` |
 
 The living catalogue is the `library` video (`content/videos/library.ts`): every type with
 example content and every hand-off. Render its stills to review the whole library.
+`library-affiliate` is the affiliate end card (the same lockup with the "Ad" tag).
 
 ### Visual presets (`src/brand/presets.ts`, `usePreset()`)
 | Preset | Use | Varies |
@@ -123,11 +135,11 @@ reveal under a hairline). Scenes carried in by slide/wipe/zoom arrive already bu
 ### Motion (`src/remotion/motion/`, `src/remotion/lib/anim.ts`)
 | Part | Use for |
 |---|---|
-| `ease.out / in / inOut / snap / linear`, `progress`, `sub`, `lerp`, `mixColor` | All timing (the easing presets). |
+| `ease.out / in / inOut / snap / glide / linear`, `progress`, `sub`, `lerp`, `mixColor`, `withAlpha`, `softRadial` | All timing (the easing presets; `glide` = premium reveals and travel). Token colours as light; smoothstep radial light without an edge. |
 | `Animate` (`rise`, `fade`, `slideUp/Left/Right`, `scale`, `blur`, `mask`) + `staggerAt` | Any element's entrance/exit; durations follow the preset tempo. `Reveal` = `rise`. |
-| `CameraRig` + `CameraKey[]` | Push/pull/pan; pivots on the live-area centre; scaled by the preset (`locked` to opt out). |
+| `CameraRig` + `CameraKey[]` | Push/pull/pan; pivots on the live-area centre; scaled by the preset (`locked` to opt out). `smooth`: one continuous path through the keys (`sampleCameraSmooth`, monotone, no stop-start) on a layer rasterised at 1:1 and moved by the compositor (sub-pixel type motion, D41). |
 | `DEPTH` planes | Parallax + depth of field. |
-| `ClickRipple`, `LightSweep`, `Spinner` | The system acted; a surface comes alive; busy. |
+| `ClickRipple`, `LightSweep`, `Spinner`, `SoftLight` | The system acted; a surface comes alive; busy; premium light (neutral bloom + tight lime core: no hue bands after encoding, D40). |
 
 ### Brand (`src/remotion/brand/`, tokens in `src/brand/tokens.ts`)
 | Requested name | Part |
@@ -136,6 +148,8 @@ reveal under a hairline). Scenes carried in by slide/wipe/zoom arrive already bu
 | BrandHeader | `SpecFrame` — registration marks, series mark, timecode, chapter label. |
 | BrandLogo | `ToggleMark` (the switch), `Wordmark`, `Label`. |
 | BrandOutro | `BrandLockup` — switch click, wordmark from a mask, hairline, CTA (`burst` option). |
+| AdDisclosure | `AdDisclosure` (`Disclosure.tsx`) — the affiliate "Ad" tag: hairline pill + one balanced sentence, neutral colours; enters 0.45 s after the CTA (with the partner's name) and stays. |
+| Partners | `PARTNERS` (`src/brand/partners.ts`) — approved affiliate programs: name, aliases, bio link, deep links, research doc. |
 | BrandColors / BrandTypography | `palette` / `type` roles + `fonts` in `src/brand/tokens.ts`. |
 
 ### Typography and captions
@@ -181,6 +195,7 @@ reveal under a hairline). Scenes carried in by slide/wipe/zoom arrive already bu
 | `ffmpeg.ts`, `audio.ts`, `dsp.ts`, `compare.ts` | Bundled ffmpeg, WAV I/O + loudness, offline DSP, SSIM/PSNR. |
 | `sound/{sampler,fx,sfx,mix}.ts` | Sampler (VCSL CC0), FFT reverb + ducking, effect library, the mix. |
 | `deliver.ts`, `qa.ts`, `sheet.ts` | Upload encode (D19/D21), QA checks, contact sheets. |
+| `browser.ts` | Visible text of a web page in the bundled headless Chrome (DevTools protocol; optional click to open a collapsed section). For the affiliate verifier, never at render time. |
 
 ## How to add a scene type
 1. Model in `src/video/scenes/` (editorial.ts / product.ts or a new file): props, layout

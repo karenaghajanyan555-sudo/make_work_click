@@ -82,6 +82,11 @@ export const type = {
   /** Big numbers in metric cards (tabular). */
   metric: { size: 66, weight: 620, tracking: '-0.04em' },
   label: { size: 19, weight: 500, tracking: '0.10em' },
+  /**
+   * Ad disclosure on an affiliate video's end card (D42): quiet but unmissable on a phone,
+   * below the CTA in size so it never competes with it.
+   */
+  disclosure: { size: 30, weight: 500, tracking: '-0.01em', leading: 1.3 },
 } as const;
 
 export const radius = {

@@ -9,17 +9,20 @@
  * Exit code 1 if any check fails. Creative review (docs/QA.md) is done from the sheets.
  */
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, writeFileSync, existsSync, rmSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { mkdirSync, writeFileSync, existsSync, readdirSync, readFileSync, rmSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { getVideo } from '../content/index.ts';
 import { FORMATS } from '../src/brand/format.ts';
 import { validateSpec } from '../src/video/spec.ts';
 import { computeTimeline } from '../src/video/timeline.ts';
-import { deliveryPath, mixPath, videoOut } from '../src/pipeline/paths.ts';
+import { deliveryPath, mixPath, ROOT, videoOut } from '../src/pipeline/paths.ts';
+import { narrationSource } from '../src/pipeline/narration.ts';
+import { captionWindows } from '../src/video/narration.ts';
 import { openSession, renderStills } from '../src/pipeline/remotion.ts';
 import { measureLoudness, readWav } from '../src/pipeline/audio.ts';
 import { ff } from '../src/pipeline/ffmpeg.ts';
-import { audioLagMs, motionProfile, QA_AUDIO, sha256, staticThreshold, technicalChecks, visualChecks, type Check } from '../src/pipeline/qa.ts';
+import { assetChecks, audioLagMs, captionChecks, decodeCheck, emptySceneCheck, motionProfile, QA_AUDIO, sha256, staticThreshold, technicalChecks, visualChecks, type Check } from '../src/pipeline/qa.ts';
 import { frameLabel, sheetFromImages, sheetFromVideo } from '../src/pipeline/sheet.ts';
 
 const id = process.argv[2];
@@ -48,8 +51,28 @@ if (!noRender || !existsSync(video)) {
   if (r.status !== 0) process.exit(r.status ?? 1);
   metrics.buildSeconds = Number(((performance.now() - t0) / 1000).toFixed(1));
 }
+const uploadSha = createHash('sha256').update(readFileSync(video)).digest('hex');
+const total = timeline.totalFrames / format.fps;
+// Captions on screen: timing and overlap (fail), reading time (warn).
+checks.push(...(spec.narration && spec.captions?.enabled !== false ? captionChecks(captionWindows(spec.narration, total), total) : [{ id: 'captions.timing', status: 'skip' as const, detail: 'no captions' }]));
+// Source files the build read are still present.
+{
+  const files: Array<{ file: string; role: string }> = [];
+  if (spec.narration) {
+    const src = narrationSource(id, spec.narration);
+    files.push({ file: path.join(src.dir, 'take.wav'), role: 'narration' }, ...src.take.lines.map((l) => ({ file: path.join(src.dir, l.file), role: 'narration line' })));
+  }
+  if (expectAudio) files.push({ file: mixPath(id), role: 'mix' });
+  for (const d of ['public/fonts', 'public/textures']) {
+    const abs = path.join(ROOT, d);
+    const list = existsSync(abs) ? readdirSync(abs).filter((f) => statSync(path.join(abs, f)).isFile()) : [];
+    files.push(...(list.length ? list.map((f) => ({ file: path.join(abs, f), role: d.split('/')[1]! })) : [{ file: abs, role: `${d} (empty)` }]));
+  }
+  checks.push(assetChecks(files, existsSync));
+}
 const session = await openSession(false);
 try {
+  checks.push(await decodeCheck(video, ff));
 
   checks.push(
     ...(await technicalChecks(video, {
@@ -80,6 +103,7 @@ try {
   }
   const motion = await motionProfile(video);
   checks.push(...visualChecks(motion, format.fps));
+  checks.push(emptySceneCheck(motion.stds, timeline.entries.map((e) => ({ id: e.scene.id, from: e.from, frames: e.durationInFrames }))));
 
   // Determinism: the same frame rendered twice must be byte-identical.
   const probeFrame = timeline.cues[Object.keys(timeline.cues).find((k) => k.endsWith('.click')) ?? ''] ?? Math.floor(timeline.totalFrames / 2);
@@ -121,6 +145,6 @@ const md = [
   '',
 ].join('\n');
 writeFileSync(path.join(qaDir, 'report.md'), md);
-writeFileSync(path.join(qaDir, 'report.json'), JSON.stringify({ id, checks, metrics, cues: timeline.cues }, null, 2) + '\n');
+writeFileSync(path.join(qaDir, 'report.json'), JSON.stringify({ id, upload: { file: path.relative(ROOT, video), sha256: uploadSha }, checks, metrics, cues: timeline.cues }, null, 2) + '\n');
 console.log(md);
 process.exit(failed.length ? 1 : 0);

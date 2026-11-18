@@ -1,0 +1,326 @@
+{
+  "sampleRate": 24000,
+  "voice": {
+    "mix": [
+      [
+        "af_bella",
+        0.6
+      ],
+      [
+        "af_nicole",
+        0.4
+      ]
+    ]
+  },
+  "speed": 1,
+  "seed": 7,
+  "engine": {
+    "kokoro": "0.9.4",
+    "misaki": "0.9.4",
+    "torch": "2.14.1+cpu",
+    "modelRevision": "f3ff3571791e39611d31c381e3a41a3af07b4987"
+  },
+  "takeDuration": 19.5,
+  "lines": [
+    {
+      "id": "hook",
+      "text": "Getting paid shouldn't depend on chasing.",
+      "file": "hook.wav",
+      "duration": 2.957,
+      "sourceStart": 0.24,
+      "words": [
+        {
+          "text": "Getting",
+          "start": 0.06,
+          "end": 0.397
+        },
+        {
+          "text": "paid",
+          "start": 0.397,
+          "end": 0.823
+        },
+        {
+          "text": "shouldn't",
+          "start": 0.823,
+          "end": 1.06
+        },
+        {
+          "text": "depend",
+          "start": 1.06,
+          "end": 1.498
+        },
+        {
+          "text": "on",
+          "start": 1.498,
+          "end": 1.698
+        },
+        {
+          "text": "chasing",
+          "start": 1.698,
+          "end": 2.76
+        }
+      ]
+    },
+    {
+      "id": "system",
+      "text": "Let the system follow up.",
+      "file": "system.wav",
+      "duration": 1.775,
+      "sourceStart": 3.197,
+      "words": [
+        {
+          "text": "Let",
+          "start": 0.028,
+          "end": 0.253
+        },
+        {
+          "text": "the",
+          "start": 0.253,
+          "end": 0.365
+        },
+        {
+          "text": "system",
+          "start": 0.365,
+          "end": 0.815
+        },
+        {
+          "text": "follow",
+          "start": 0.815,
+          "end": 1.178
+        },
+        {
+          "text": "up",
+          "start": 1.178,
+          "end": 1.653
+        }
+      ]
+    },
+    {
+      "id": "step1",
+      "text": "Finish the job. The invoice goes out on its own.",
+      "file": "step1.wav",
+      "duration": 3.907,
+      "sourceStart": 4.972,
+      "words": [
+        {
+          "text": "Finish",
+          "start": 0.028,
+          "end": 0.403
+        },
+        {
+          "text": "the",
+          "start": 0.403,
+          "end": 0.515
+        },
+        {
+          "text": "job",
+          "start": 0.515,
+          "end": 1.378
+        },
+        {
+          "text": "The",
+          "start": 1.565,
+          "end": 1.728
+        },
+        {
+          "text": "invoice",
+          "start": 1.728,
+          "end": 2.278
+        },
+        {
+          "text": "goes",
+          "start": 2.278,
+          "end": 2.578
+        },
+        {
+          "text": "out",
+          "start": 2.578,
+          "end": 2.79
+        },
+        {
+          "text": "on",
+          "start": 2.79,
+          "end": 2.915
+        },
+        {
+          "text": "its",
+          "start": 2.915,
+          "end": 3.078
+        },
+        {
+          "text": "own",
+          "start": 3.078,
+          "end": 3.753
+        }
+      ]
+    },
+    {
+      "id": "step2",
+      "text": "Still unpaid by Thursday? The reminder sends itself.",
+      "file": "step2.wav",
+      "duration": 4.219,
+      "sourceStart": 8.879,
+      "words": [
+        {
+          "text": "Still",
+          "start": 0.009,
+          "end": 0.434
+        },
+        {
+          "text": "unpaid",
+          "start": 0.434,
+          "end": 1.096
+        },
+        {
+          "text": "by",
+          "start": 1.096,
+          "end": 1.309
+        },
+        {
+          "text": "Thursday",
+          "start": 1.309,
+          "end": 2.121
+        },
+        {
+          "text": "The",
+          "start": 2.246,
+          "end": 2.346
+        },
+        {
+          "text": "reminder",
+          "start": 2.346,
+          "end": 2.909
+        },
+        {
+          "text": "sends",
+          "start": 2.909,
+          "end": 3.246
+        },
+        {
+          "text": "itself",
+          "start": 3.246,
+          "end": 4.146
+        }
+      ]
+    },
+    {
+      "id": "step3",
+      "text": "And the payment lands.",
+      "file": "step3.wav",
+      "duration": 1.599,
+      "sourceStart": 13.098,
+      "words": [
+        {
+          "text": "And",
+          "start": 0.027,
+          "end": 0.165
+        },
+        {
+          "text": "the",
+          "start": 0.165,
+          "end": 0.252
+        },
+        {
+          "text": "payment",
+          "start": 0.252,
+          "end": 0.652
+        },
+        {
+          "text": "lands",
+          "start": 0.652,
+          "end": 1.477
+        }
+      ]
+    },
+    {
+      "id": "payoff",
+      "text": "Not one reminder came from you.",
+      "file": "payoff.wav",
+      "duration": 2.198,
+      "sourceStart": 14.697,
+      "words": [
+        {
+          "text": "Not",
+          "start": 0.015,
+          "end": 0.29
+        },
+        {
+          "text": "one",
+          "start": 0.29,
+          "end": 0.528
+        },
+        {
+          "text": "reminder",
+          "start": 0.528,
+          "end": 1.078
+        },
+        {
+          "text": "came",
+          "start": 1.078,
+          "end": 1.353
+        },
+        {
+          "text": "from",
+          "start": 1.353,
+          "end": 1.528
+        },
+        {
+          "text": "you",
+          "start": 1.528,
+          "end": 2.003
+        }
+      ]
+    },
+    {
+      "id": "cta",
+      "text": "Follow for more systems like this.",
+      "file": "cta.wav",
+      "duration": 2.55,
+      "sourceStart": 16.895,
+      "words": [
+        {
+          "text": "Follow",
+          "start": 0.005,
+          "end": 0.405
+        },
+        {
+          "text": "for",
+          "start": 0.405,
+          "end": 0.53
+        },
+        {
+          "text": "more",
+          "start": 0.53,
+          "end": 0.768
+        },
+        {
+          "text": "systems",
+          "start": 0.768,
+          "end": 1.33
+        },
+        {
+          "text": "like",
+          "start": 1.33,
+          "end": 1.555
+        },
+        {
+          "text": "this",
+          "start": 1.555,
+          "end": 2.33
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "f0MedianHz": 186.0,
+    "f0P10Hz": 154.8,
+    "f0P90Hz": 216.2,
+    "spectralCentroidHz": 2891.0,
+    "wordsPerSecondSpeaking": 2.55,
+    "peak": 0.57
+  },
+  "timing": {
+    "loadSeconds": 6.5,
+    "synthSeconds": 10.86
+  }
+}

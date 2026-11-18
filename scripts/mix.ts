@@ -5,7 +5,7 @@
  *     → public/generated/<id>/mix.wav   (Studio preview + delivery mux; gitignored, rebuilt)
  *     → out/<id>/mix/{stems/*.wav, report.json, report.md}
  */
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, renameSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { getVideo } from '../content/index.ts';
 import { MIX_INPUTS, recordStep, sha256, treeHash, upToDate } from '../src/pipeline/cache.ts';
@@ -33,7 +33,9 @@ const { mix, stems, report } = await renderMix(spec, work);
 
 const pub = path.join(ROOT, 'public', 'generated', id);
 mkdirSync(pub, { recursive: true });
-writeStereo(path.join(pub, 'mix.wav'), mix);
+// Written beside, then renamed: an interrupted write never leaves a truncated mix.wav that a later run could take for current.
+writeStereo(path.join(pub, 'mix.part.wav'), mix);
+renameSync(path.join(pub, 'mix.part.wav'), path.join(pub, 'mix.wav'));
 mkdirSync(path.join(outDir, 'stems'), { recursive: true });
 for (const [name, s] of Object.entries(stems)) writeStereo(path.join(outDir, 'stems', `${name}.wav`), s);
 

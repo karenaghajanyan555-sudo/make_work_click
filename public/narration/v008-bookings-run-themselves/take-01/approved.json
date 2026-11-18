@@ -1,0 +1,39 @@
+{
+  "video": "v008-bookings-run-themselves",
+  "take": "take-01",
+  "approvedOn": "2026-11-18",
+  "source": "draft 120388185fea8250 (npm run voice)",
+  "rule": "Immutable. Never overwrite or re-synthesise; improvements go to a new take directory.",
+  "voice": {
+    "mix": [
+      [
+        "af_bella",
+        0.6
+      ],
+      [
+        "af_nicole",
+        0.4
+      ]
+    ]
+  },
+  "speed": 1,
+  "seed": 7,
+  "engine": {
+    "kokoro": "0.9.4",
+    "misaki": "0.9.4",
+    "torch": "2.14.1+cpu",
+    "modelRevision": "f3ff3571791e39611d31c381e3a41a3af07b4987"
+  },
+  "files": {
+    "take.json": "739610d40d898123e9038f4bebf6acb9ed0e6bb48a03c4e5fe37c54c209174af",
+    "take.wav": "62892efaa2817e99d189037277ba31c7407d01dde589da4d49486d7a479f23c5",
+    "hook.wav": "d1aa3686175b54ddbf7be5cb7ce933524a8153e39b3150dfb53a59b1e2d9374a",
+    "system.wav": "cf66a06ab6d658fe2f6b083e06cea641b5b5adbbdba19feb314c3ce2125b9e18",
+    "step1.wav": "580a61bb9f62246c1814aa10ae8f5a782d9e5d5d23cc896f8d14d59a2ad282e0",
+    "step2.wav": "f60453c6425bf435ca02f1a118ef11ad57300be9ac8c17725537414e15712491",
+    "step3.wav": "123165b56144b1e52c6740ccb2c055447e90a0c2f2abf3321ca1225742fe9dec",
+    "payoff.wav": "286a9faebd1ef206d8358b57dd5cfdca0b3c4f520956bcbf500e58e5713ce9e4",
+    "cta.wav": "a14b338fcfee4e975b8ec5caa315ef7acfed3fbcea7c3c0e83129d74e4e6100c",
+    "approved-audition.m4a": "931db69a63db64434b2416fc8dd234908b7c5d73dbafd5a9d7dd80a5f69ebc0a"
+  }
+}

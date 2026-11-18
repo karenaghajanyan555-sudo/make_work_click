@@ -89,6 +89,13 @@ export type FlowRunProps = {
   stamp?: string;
   /** The resolved to-dos stream into the switch on light trails. */
   trails?: boolean;
+  /**
+   * Premium motion (opt-in, v003+): one continuous camera glide (a slow push that deepens step
+   * by step, drifting toward each side, then one pull-back) instead of leaning in and out on
+   * every step; soft light (neutral bloom, tight lime core); the to-dos curve into the switch
+   * and settle into it instead of accelerating in a straight line.
+   */
+  smooth?: boolean;
 };
 
 /** Composition (base units). Window rect is chaosToSystem's — continuity. */

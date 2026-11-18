@@ -24,8 +24,13 @@
     "make": "node scripts/make.ts",
     "new-video": "node scripts/new-video.ts",
     "publish-pack": "node scripts/publish-pack.ts",
+    "verify-affiliate": "node --disable-warning=ExperimentalWarning scripts/verify-affiliate.ts",
+    "produce": "node --disable-warning=ExperimentalWarning scripts/produce.ts",
+    "control": "node --disable-warning=ExperimentalWarning scripts/control.ts",
+    "db": "node --disable-warning=ExperimentalWarning scripts/db.ts",
     "typecheck": "tsc --noEmit",
     "test": "node --test --disable-warning=ExperimentalWarning \"tests/**/*.test.ts\"",
+    "test:e2e": "node --disable-warning=ExperimentalWarning scripts/e2e.ts",
     "check": "npm run typecheck && npm test"
   },
   "dependencies": {

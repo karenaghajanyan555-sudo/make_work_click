@@ -1,0 +1,341 @@
+{
+  "sampleRate": 24000,
+  "voice": {
+    "mix": [
+      [
+        "af_bella",
+        0.6
+      ],
+      [
+        "af_nicole",
+        0.4
+      ]
+    ]
+  },
+  "speed": 1,
+  "seed": 7,
+  "engine": {
+    "kokoro": "0.9.4",
+    "misaki": "0.9.4",
+    "torch": "2.14.1+cpu",
+    "modelRevision": "f3ff3571791e39611d31c381e3a41a3af07b4987"
+  },
+  "takeDuration": 19.375,
+  "lines": [
+    {
+      "id": "hook",
+      "text": "Booking one call shouldn't take ten messages.",
+      "file": "hook.wav",
+      "duration": 2.982,
+      "sourceStart": 0.265,
+      "words": [
+        {
+          "text": "Booking",
+          "start": 0.06,
+          "end": 0.385
+        },
+        {
+          "text": "one",
+          "start": 0.385,
+          "end": 0.622
+        },
+        {
+          "text": "call",
+          "start": 0.622,
+          "end": 1.022
+        },
+        {
+          "text": "shouldn't",
+          "start": 1.022,
+          "end": 1.285
+        },
+        {
+          "text": "take",
+          "start": 1.285,
+          "end": 1.598
+        },
+        {
+          "text": "ten",
+          "start": 1.598,
+          "end": 1.86
+        },
+        {
+          "text": "messages",
+          "start": 1.86,
+          "end": 2.86
+        }
+      ]
+    },
+    {
+      "id": "system",
+      "text": "Let one link do the booking.",
+      "file": "system.wav",
+      "duration": 1.921,
+      "sourceStart": 3.247,
+      "words": [
+        {
+          "text": "Let",
+          "start": 0.015,
+          "end": 0.253
+        },
+        {
+          "text": "one",
+          "start": 0.253,
+          "end": 0.478
+        },
+        {
+          "text": "link",
+          "start": 0.478,
+          "end": 0.728
+        },
+        {
+          "text": "do",
+          "start": 0.728,
+          "end": 0.903
+        },
+        {
+          "text": "the",
+          "start": 0.903,
+          "end": 1.003
+        },
+        {
+          "text": "booking",
+          "start": 1.003,
+          "end": 1.828
+        }
+      ]
+    },
+    {
+      "id": "step1",
+      "text": "They pick a time, and pay up front.",
+      "file": "step1.wav",
+      "duration": 2.75,
+      "sourceStart": 5.168,
+      "words": [
+        {
+          "text": "They",
+          "start": 0.007,
+          "end": 0.157
+        },
+        {
+          "text": "pick",
+          "start": 0.157,
+          "end": 0.369
+        },
+        {
+          "text": "a",
+          "start": 0.369,
+          "end": 0.469
+        },
+        {
+          "text": "time",
+          "start": 0.469,
+          "end": 1.007
+        },
+        {
+          "text": "and",
+          "start": 1.082,
+          "end": 1.219
+        },
+        {
+          "text": "pay",
+          "start": 1.219,
+          "end": 1.469
+        },
+        {
+          "text": "up",
+          "start": 1.469,
+          "end": 1.669
+        },
+        {
+          "text": "front",
+          "start": 1.669,
+          "end": 2.582
+        }
+      ]
+    },
+    {
+      "id": "step2",
+      "text": "The confirmation goes out, with the call link.",
+      "file": "step2.wav",
+      "duration": 3.079,
+      "sourceStart": 7.918,
+      "words": [
+        {
+          "text": "The",
+          "start": 0.044,
+          "end": 0.157
+        },
+        {
+          "text": "confirmation",
+          "start": 0.157,
+          "end": 0.957
+        },
+        {
+          "text": "goes",
+          "start": 0.957,
+          "end": 1.257
+        },
+        {
+          "text": "out",
+          "start": 1.257,
+          "end": 1.632
+        },
+        {
+          "text": "with",
+          "start": 1.707,
+          "end": 1.844
+        },
+        {
+          "text": "the",
+          "start": 1.844,
+          "end": 1.944
+        },
+        {
+          "text": "call",
+          "start": 1.944,
+          "end": 2.257
+        },
+        {
+          "text": "link",
+          "start": 2.257,
+          "end": 2.957
+        }
+      ]
+    },
+    {
+      "id": "step3",
+      "text": "The day before, the reminder sends itself.",
+      "file": "step3.wav",
+      "duration": 2.975,
+      "sourceStart": 10.997,
+      "words": [
+        {
+          "text": "The",
+          "start": 0.015,
+          "end": 0.128
+        },
+        {
+          "text": "day",
+          "start": 0.128,
+          "end": 0.328
+        },
+        {
+          "text": "before",
+          "start": 0.328,
+          "end": 0.903
+        },
+        {
+          "text": "the",
+          "start": 0.978,
+          "end": 1.078
+        },
+        {
+          "text": "reminder",
+          "start": 1.078,
+          "end": 1.64
+        },
+        {
+          "text": "sends",
+          "start": 1.64,
+          "end": 1.978
+        },
+        {
+          "text": "itself",
+          "start": 1.978,
+          "end": 2.853
+        }
+      ]
+    },
+    {
+      "id": "payoff",
+      "text": "Ten messages became one link.",
+      "file": "payoff.wav",
+      "duration": 2.031,
+      "sourceStart": 13.972,
+      "words": [
+        {
+          "text": "Ten",
+          "start": 0.015,
+          "end": 0.278
+        },
+        {
+          "text": "messages",
+          "start": 0.278,
+          "end": 0.828
+        },
+        {
+          "text": "became",
+          "start": 0.828,
+          "end": 1.228
+        },
+        {
+          "text": "one",
+          "start": 1.228,
+          "end": 1.453
+        },
+        {
+          "text": "link",
+          "start": 1.453,
+          "end": 1.928
+        }
+      ]
+    },
+    {
+      "id": "cta",
+      "text": "Set it up once. Link in bio.",
+      "file": "cta.wav",
+      "duration": 3.317,
+      "sourceStart": 16.003,
+      "words": [
+        {
+          "text": "Set",
+          "start": 0.022,
+          "end": 0.235
+        },
+        {
+          "text": "it",
+          "start": 0.235,
+          "end": 0.31
+        },
+        {
+          "text": "up",
+          "start": 0.31,
+          "end": 0.497
+        },
+        {
+          "text": "once",
+          "start": 0.497,
+          "end": 1.397
+        },
+        {
+          "text": "Link",
+          "start": 1.61,
+          "end": 2.085
+        },
+        {
+          "text": "in",
+          "start": 2.085,
+          "end": 2.247
+        },
+        {
+          "text": "bio",
+          "start": 2.247,
+          "end": 3.097
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "f0MedianHz": 184.6,
+    "f0P10Hz": 156.9,
+    "f0P90Hz": 220.2,
+    "spectralCentroidHz": 2945.0,
+    "wordsPerSecondSpeaking": 2.74,
+    "peak": 0.456
+  },
+  "timing": {
+    "loadSeconds": 6.3,
+    "synthSeconds": 12.08
+  }
+}

@@ -34,6 +34,9 @@ are physical (cards flip, windows build), never a light surface fading over the 
   signal words). Never decoration, never on the "before" side of a story.
 - Friction coral `#FF8A65`: only on "before" items (Overdue, Forgot). Small, sparing.
 - No other hues except the fictional workspace avatar's muted tan.
+- The ad disclosure (affiliate videos, D42) is neutral: paper text, a hairline pill around a
+  mono "AD", type role `disclosure` (30 u, below the CTA's 46). Never lime (it is not the
+  system's doing), never coral. Partners are named in our type, never with their logo.
 
 ## Typography
 | Role | Spec | Use |
@@ -60,17 +63,26 @@ Typographic quotes and apostrophes (’ “ ”) always.
 - Film grain always on, in the ground layer (normal blend, ~0.06 over a mean-128 tile, ground
   pre-darkened so perceived ink stays `#0A0B0D`). It dithers gradients against banding; text
   and UI stay crisp on top of it.
+- **Wide light is neutral; lime light is tight** (D40). The grain dithers brightness only: a
+  wide, faint lime glow breaks into hue rings after H.264 4:2:0 (measured, and seen by the
+  owner as "pixels"). Use `SoftLight`: a key-light-coloured bloom with smoothstep falloff and a
+  lime core ≤ ~320 units wide, where its gradient is steep enough not to band.
 
 ## Motion language
 - **Character:** confident, precise, unhurried. Fast departure, long soft settle, no bounce,
   no overshoot (the one "pop" allowed is a chip resolving).
 - **Easings** (`ease` in `src/remotion/lib/anim.ts`): `out` entrances, `in` exits, `inOut`
-  camera/state, `snap` magnetic travel into place.
+  camera/state, `snap` magnetic travel into place, `glide` premium reveals and travel (leaves
+  from rest, long settle: no pop).
 - **Durations** (tokens): micro 0.2s · quick 0.33s · base 0.55s · slow 0.8s · travel 0.95s.
   Word stagger 0.1s, item stagger 0.06–0.1s.
 - **Entrances:** rise ~0.4em into focus from 12px blur. **Exits:** lift and defocus as one.
 - **Camera:** slow push during a hold (≤ 3.5%), settle when the system assembles, gentle push
-  while it runs. Never handheld shake, never fast zooms.
+  while it runs. Never handheld shake, never fast zooms. Premium scenes (`smooth`, D40): one
+  continuous path through the keys — no stop-start at every key, no speed jump at a cut, no
+  leaning in and out on each step. Pushes on type run on the compositor-moved camera layer
+  (D41): glyphs snap to whole pixels otherwise, and a slow push on text stutters. The reel
+  opens already moving and the end card is still pushing on its last frame.
 - **Transitions:** `focusPull` hand-off (outgoing defocuses over 10 frames, 4-frame overlap)
   or a hard `cut` on a beat; presets add push, wipe, zoom-through, blur and fade
   (src/video/timeline.ts `TRANSITIONS`). Inside scenes, prefer physical transformations

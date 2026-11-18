@@ -109,6 +109,10 @@ export async function technicalChecks(file: string, exp: Expected): Promise<Chec
   add('video.size', v.width === exp.width && v.height === exp.height, `${v.width}x${v.height}`);
   add('video.fps', v.r_frame_rate === `${exp.fps}/1`, String(v.r_frame_rate));
   add('video.pixfmt', v.pix_fmt === 'yuv420p', String(v.pix_fmt));
+  // Colour matrix tagged BT.709 (D40). Untagged files (renders before D40) are only a warning:
+  // players then guess the matrix, and Chrome showed the brand lime ~12 levels duller in green.
+  const tagged = v.color_space === 'bt709' && v.color_primaries === 'bt709' && v.color_transfer === 'bt709';
+  checks.push({ id: 'video.colour', status: tagged ? 'pass' : 'warn', detail: `matrix ${v.color_space ?? 'unknown'}, primaries ${v.color_primaries ?? 'unknown'}, transfer ${v.color_transfer ?? 'unknown'}` });
   add('video.frames', Number(v.nb_frames) === exp.durationInFrames, `${v.nb_frames} frames (expected ${exp.durationInFrames})`);
   const vdur = Number(v.duration ?? p.format.duration);
   add('video.duration', Math.abs(vdur - exp.durationInFrames / exp.fps) < 1 / exp.fps, `${vdur.toFixed(3)}s (expected ${(exp.durationInFrames / exp.fps).toFixed(3)}s ± 1 frame)`);
@@ -206,4 +210,72 @@ export function visualChecks(m: MotionProfile, fps: number): Check[] {
 
 export function sha256(file: string): string {
   return createHash('sha256').update(readFileSync(file)).digest('hex');
+}
+
+// ---------- integrity, captions, empty scenes, assets (added in Phase 2.5) ----------
+
+/** Rules for caption windows on screen (reading time from docs/STORY.md: ≤ 7 words per phrase). */
+export const QA_CAPTIONS = { minSeconds: 0.5, secondsPerWord: 0.15 } as const;
+
+type Window = { id: string; markup: string; at: number; out: number };
+/**
+ * Caption windows: inside the video, in order, never two on screen at once (fail), and
+ * each long enough to read (warn: minSeconds or secondsPerWord × words, whichever is longer).
+ */
+export function captionChecks(windows: readonly Window[], totalSeconds: number): Check[] {
+  if (!windows.length) return [{ id: 'captions.timing', status: 'skip', detail: 'no captions' }];
+  const fails: string[] = [];
+  const short: string[] = [];
+  windows.forEach((w, i) => {
+    if (w.at < 0 || w.out > totalSeconds + 1e-6) fails.push(`${w.id} outside the video (${w.at.toFixed(2)}–${w.out.toFixed(2)} s of ${totalSeconds.toFixed(2)} s)`);
+    if (w.out <= w.at) fails.push(`${w.id} never shows (${w.at.toFixed(2)}–${w.out.toFixed(2)} s)`);
+    const next = windows[i + 1];
+    if (next && next.at < w.out - 1e-6) fails.push(`${w.id} still on screen when ${next.id} appears (${w.out.toFixed(2)} > ${next.at.toFixed(2)} s)`);
+    const words = w.markup.replace(/[*_\[\]{}]/g, ' ').split(/\s+/).filter(Boolean).length;
+    const need = Math.max(QA_CAPTIONS.minSeconds, words * QA_CAPTIONS.secondsPerWord);
+    if (w.out - w.at < need - 1e-6) short.push(`${w.id} ${(w.out - w.at).toFixed(2)} s for ${words} words (≥ ${need.toFixed(2)} s)`);
+  });
+  if (fails.length) return [{ id: 'captions.timing', status: 'fail', detail: fails.join('; ') }];
+  if (short.length) return [{ id: 'captions.timing', status: 'warn', detail: `short on screen: ${short.join('; ')}` }];
+  const minDur = Math.min(...windows.map((w) => w.out - w.at));
+  return [{ id: 'captions.timing', status: 'pass', detail: `${windows.length} caption windows, in order, no overlap, shortest ${minDur.toFixed(2)} s` }];
+}
+
+/** A scene whose most detailed frame is below the "content visible" threshold shows nothing. */
+export function emptySceneCheck(stds: readonly number[], scenes: ReadonlyArray<{ id: string; from: number; frames: number }>): Check {
+  const empty: string[] = [];
+  for (const s of scenes) {
+    const slice = stds.slice(s.from, s.from + s.frames);
+    if (!slice.length) {
+      empty.push(`${s.id} (no frames decoded)`);
+      continue;
+    }
+    const max = Math.max(...slice);
+    if (max < THRESHOLDS.firstFrameMinStd) empty.push(`${s.id} (max detail ${max.toFixed(1)} < ${THRESHOLDS.firstFrameMinStd})`);
+  }
+  return empty.length
+    ? { id: 'visual.emptyScene', status: 'fail', detail: `scenes with no visible content: ${empty.join(', ')}` }
+    : { id: 'visual.emptyScene', status: 'pass', detail: `all ${scenes.length} scenes show content (luma detail ≥ ${THRESHOLDS.firstFrameMinStd})` };
+}
+
+/**
+ * Output integrity: decode every frame and audio sample of the upload; any decoder error
+ * (truncated file, corrupt packet) fails. Catches what probing the header cannot.
+ */
+export async function decodeCheck(file: string, ffRun: (bin: 'ffmpeg', args: string[]) => Promise<{ code: number | null; stderr: string }>): Promise<Check> {
+  const t0 = performance.now();
+  const r = await ffRun('ffmpeg', ['-hide_banner', '-nostdin', '-v', 'error', '-xerror', '-i', file, '-map', '0', '-c:v', 'rawvideo', '-c:a', 'pcm_s16le', '-f', 'null', '-']);
+  const s = ((performance.now() - t0) / 1000).toFixed(1);
+  const err = r.stderr.trim().split('\n').filter(Boolean);
+  return r.code === 0 && !err.length
+    ? { id: 'container.decode', status: 'pass', detail: `every frame and sample decodes without error (${s} s)` }
+    : { id: 'container.decode', status: 'fail', detail: `decoder errors (exit ${r.code}): ${err.slice(0, 3).join(' / ').slice(0, 300)}` };
+}
+
+/** Files the build read must still be there (a deleted take or texture otherwise surfaces only on the next render). */
+export function assetChecks(files: ReadonlyArray<{ file: string; role: string }>, exists: (f: string) => boolean): Check {
+  const missing = files.filter((f) => !exists(f.file));
+  return missing.length
+    ? { id: 'assets.present', status: 'fail', detail: `missing: ${missing.map((m) => `${m.role} ${m.file}`).join(', ')}` }
+    : { id: 'assets.present', status: 'pass', detail: `${files.length} source files present (narration take, mix, textures, fonts)` };
 }

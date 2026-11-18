@@ -148,6 +148,10 @@ export function writeTimingLock(lock: TimingLock): string {
     '',
   ].join('\n');
   const old = existsSync(file) ? readFileSync(file, 'utf8') : '';
-  if (old !== body) writeFileSync(file, body);
+  if (old !== body) {
+    // Every video imports content/index.ts, which imports every lock: never leave a half-written one.
+    writeFileSync(`${file}.tmp`, body);
+    renameSync(`${file}.tmp`, file);
+  }
   return file;
 }

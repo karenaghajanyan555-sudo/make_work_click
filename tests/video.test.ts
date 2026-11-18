@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { VIDEOS } from '../content/index.ts';
 import { computeLayout, isInsideSafe } from '../src/brand/format.ts';
-import { sampleCamera } from '../src/video/camera.ts';
+import { sampleCamera, sampleCameraSmooth } from '../src/video/camera.ts';
 import { validateSpec, type VideoSpec } from '../src/video/spec.ts';
 import { chapterAt, computeTimeline, toFrames } from '../src/video/timeline.ts';
 
@@ -34,6 +34,20 @@ test('validation catches broken content', () => {
   assert.match(errors, /letters, digits and dashes/);
   assert.match(errors, /chapter cue "nope"/);
   assert.match(errors, /flow needs 2-4 steps/);
+});
+
+test('flow step icon: opt-in override, unknown names rejected, default unchanged', async () => {
+  const { validateChaosToSystem } = await import('../src/video/scenes/chaosToSystem.ts');
+  const scene = base.scenes[0]!;
+  if (scene.type !== 'chaosToSystem') throw new Error('fixture: first scene must be chaosToSystem');
+  const withIcon = (icon: unknown) => ({ ...scene.props, flow: scene.props.flow.map((s, i) => (i === 1 ? { ...s, icon } : s)) }) as typeof scene.props;
+  assert.deepEqual(validateChaosToSystem(scene.props), []);
+  assert.deepEqual(validateChaosToSystem(withIcon('card')), []);
+  assert.deepEqual(validateChaosToSystem(withIcon('contact')), []);
+  assert.match(validateChaosToSystem(withIcon('coin')).join('\n'), /flow step 1: icon "coin"/);
+  // Earlier videos never set it: their steps keep the kind's icon (v008: card; v009: card + contact).
+  for (const v of VIDEOS.filter((v) => !v.id.startsWith('v008') && !v.id.startsWith('v009')))
+    for (const s of v.scenes) if (s.type === 'chaosToSystem' || s.type === 'flowRun') assert.ok(s.props.flow.every((st) => st.icon === undefined), v.id);
 });
 
 test('timeline: single scene', () => {
@@ -101,6 +115,31 @@ test('camera: holds before first key, eases between keys, holds after last', () 
   assert.deepEqual(sampleCamera(keys, 5), { zoom: 1.1, x: 10, y: 0 });
   const early = sampleCamera(keys, 0.5);
   assert.ok(early.zoom < 1.025, 'in-out easing is slow at the start');
+});
+
+test('smooth camera: exact at keys, never overshoots, no speed jump at a key, rests at the ends', () => {
+  const keys = [
+    { t: 0, zoom: 1, x: 0, y: 0 },
+    { t: 1, zoom: 1.02, x: 4, y: 6 },
+    { t: 2, zoom: 1.05, x: -4, y: 6, ease: 'linear' as const },
+    { t: 3, zoom: 1.05, x: -4, y: 6 },
+    { t: 4, zoom: 1.0, x: 0, y: 0 },
+  ];
+  for (const k of keys) assert.ok(Math.abs(sampleCameraSmooth(keys, k.t).zoom - k.zoom) < 1e-12);
+  const dt = 1 / 3000;
+  const speed = (t: number) => (sampleCameraSmooth(keys, t + dt).zoom - sampleCameraSmooth(keys, t - dt).zoom) / (2 * dt);
+  for (let t = 0; t <= 4; t += 0.01) {
+    const z = sampleCameraSmooth(keys, t).zoom;
+    assert.ok(z >= 1 - 1e-12 && z <= 1.05 + 1e-12, `no overshoot at ${t}`);
+  }
+  // Through a monotone key (t = 1) the camera keeps moving: no stop, no jump in speed.
+  assert.ok(speed(1) > 0.01);
+  assert.ok(Math.abs(speed(1 - 0.002) - speed(1 + 0.002)) < 0.002);
+  // The per-segment ease of sampleCamera stops at every key; the smooth path does not.
+  assert.ok((sampleCamera(keys, 1).zoom - sampleCamera(keys, 1 - dt).zoom) / dt < speed(1) / 5);
+  // Holds where the keys hold, rests at both ends.
+  assert.ok(Math.abs(sampleCameraSmooth(keys, 2.5).zoom - 1.05) < 1e-12);
+  assert.ok(Math.abs(speed(0.001)) < 0.01 && Math.abs(speed(3.999)) < 0.01);
 });
 
 test('chaosToSystem: critical layout sits inside the safe zone', async () => {
