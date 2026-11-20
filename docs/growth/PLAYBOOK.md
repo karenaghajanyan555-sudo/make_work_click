@@ -83,39 +83,43 @@ than our videos. The hook decides almost everything; the end is the second exit 
 - **No growth hacks.** No follow-for-follow, pods, bought engagement, share/comment bait (O4, O12).
 - **Monetisation later.** Knowledge videos first (§ 8).
 
-## 6. Story shapes (retention-first), mapped to our scene library
-Pick the shape from the topic, never by habit. Never reuse the last video's shape twice in a row.
-Each shape names the moment the open question is answered.
+## 6. Creative directions (D46: reuse the engine, not the creative experience)
+No default shape. For every video: write what the subject deserves, develop **three genuinely
+different directions** (each pair differs in ≥ 2 of opening, structure, visual metaphor,
+demonstration), score them for the subject (fit, hook, demonstration, feasibility, 1–5 each),
+and choose the strongest one that passes the comparison with the last five (`npm run
+diversity`). Diversity is a gate; suitability decides. Then map the concept to engine parts.
 
-| Shape | Beats | Scenes (catalogue) | Question answered at |
-|---|---|---|---|
-| **A. Discovery** — problem → unexpected discovery → demonstration → payoff | 0–2 s the costly before-state, big · 2–6 s "there's a setting / a step most people skip" (loop opens) · 6–18 s the demonstration, one step at a time, legible · last 3 s payoff + recap | `problem` (counter climbing) → `statement` (the twist) → `flowRun`/`notifications` (focus on one step) → `payoff` | ~70 % |
-| **B. Escalation** — hook → curiosity → escalation → reveal | each beat raises the cost (1 message → 6 → a lost client) before the reveal | `problem` → `timeline` (it gets worse) → `comparison` click → `data` | ~75 % |
-| **C. Before/after with a number** — pain → old way → new way → time saved | old way timed (coral) · click · new way timed (lime) · the difference | `timeline` (old) → `comparison` → `data` (real measured minutes only) | the number, last 4 s |
-| **D. Myth** — common belief → contradiction → evidence → conclusion | "Everyone says X" · "X is why Y" · proof · the rule to keep | `statement` → `statement` → `comparison`/`data` → `payoff` | conclusion |
-| **E. Experiment** — challenge → test → result → lesson | "I tried to do X in 60 s" · the attempt · the result · what we learned | needs a timer/race scene or real capture (proposal) | result |
-| **F. Mistake** — "you're doing X wrong" → why it fails → the fix → recap | the wrong way shown (coral) · consequence · fix · save-able recap | `problem` → `statement` → `flowRun` → `payoff` (recap) | the fix |
-| **G. Checklist** — "3 things to set up before Friday" | each item a 4–6 s mini-demo with its own micro-payoff; recap card | `statement` per item + `flowRun`/`dashboard`; `payoff` as recap | item by item; the recap holds ≥ 2 s for a screenshot |
+| Direction (kind) | Fits subjects that… | Opening ideas (already happening at frame 0) | Engine today | Missing (opt-in, only when a video needs it) |
+|---|---|---|---|---|
+| Cinematic product demonstration (`product-demo`) | have a real tool doing something surprising | the result appearing on the real screen | camera rig, UI kit (illustrative only) | `capture` scene (D46 phase 2) |
+| Timed experiment / challenge (`experiment`) | can be tested and timed by us | a timer already running | `data` count-ups, `timeline` playhead | a running timer element; a split race |
+| Before/after transformation (`before-after`, `transformation`) | have a visible messy → clean change | the mess mid-collapse | `chaosToSystem`, `comparison` | — (used by v001–v009: don't repeat back to back) |
+| Investigative documentary (`investigation`) | rest on a claim worth tracing | the evidence in close-up | `timeline` (chronology), `statement` | a source/evidence document element (quote, highlight, citation) |
+| First-person narrative (`first-person`) | have a character's day or an object's view | the character mid-problem | any scene; same narrator in first person | an object/POV framing if needed |
+| Split-screen comparison (`split-comparison`) | compare two ways side by side | both running at once | `comparison` (flip, one side at a time) | a simultaneous split |
+| Visual mystery and reveal (`mystery-reveal`) | hide a surprising answer | a cropped, unexplained image | `Animate` mask, `KineticPhrase` mask | a progressive crop/zoom-out reveal |
+| Myth vs reality (`myth`) | correct a common belief | the myth stated, then visibly cracking | `statement`, `comparison`, `data` | — |
+| Unexpected use case (`unexpected-use`) | use a known tool in a new way | the odd result first | illustrative UI | `capture` for real tools |
+| Customer journey simulation (`customer-journey`) | are best seen from the customer's side | the customer mid-wait | `timeline`, `notifications`, `flowRun` | — |
+| Live workflow demonstration (`live-workflow`) | are a sequence of steps | step 1 already firing | `flowRun` (illustrative), `capture` later | — |
+| Data-driven explanation (`data-explainer`) | have sourced numbers that surprise | the number counting | `data` (metrics, chart, callout) | — |
+Plus the retention shapes: discovery, escalation, mistake, checklist (same rules).
 
-The signature arc (`chaosToSystem → flowRun → endCard`) stays a tool for shape A/C, not the
-default. **Per-scene sheet** (goes in `docs/storyboards/<id>.md`): purpose · narration · on-screen
-text · visual concept · motion · sound · transition out · duration · *why the viewer keeps
-watching* (the open question at the end of this scene). A scene that has no answer to the last
-column is cut.
+**Per-scene sheet** (in `docs/storyboards/<id>.md`): purpose · narration · on-screen text ·
+visual concept · motion · sound · transition out · duration · *why the viewer keeps watching* ·
+engine mapping. A scene with no answer to "why keep watching" is cut.
 
-### Rules that apply to every shape
-- **Frame 0 shows the subject, not the headline being typed.** A big, legible visual of the
-  before-state or the result (a counter at 47, a calendar full of red, the finished thing). The
-  headline joins it.
-- **Hook alignment**: the picture, the on-screen words and the voice make the same point.
-- **Withhold the how.** Name the problem and the promise; reveal the method after the middle.
+### Rules for every direction
+- **Frame 0 shows something happening**, not a headline being typed (STORY.md § The first three
+  seconds).
+- **Hook alignment**: picture, on-screen words and voice make the same point; on-screen words
+  are not the narration verbatim.
+- **Withhold the how** until after the middle.
 - **New information every ~3 s** (a number, a step, a consequence) — motion alone does not count.
-- **Readable proof**: anything the viewer must read ≥ ~30 u (≈ 11 pt on a 390-pt phone); zoom into
-  the one element that matters instead of showing the whole window.
-- **Stakes**: name what the before-state costs (a client, a payment, an evening) — truthfully.
-- **End on the payoff.** Brand mark ≤ ~1.5 s, or the lockup *is* the payoff frame. CTA names the
-  next specific video or the specific value of following ("Every Monday: one system you can copy").
-- **Loopable last line** where natural (the last line leads into the first frame).
+- **Readable proof**: anything the viewer must read ≥ ~30 u (≈ 11 pt on a 390-pt phone).
+- **Stakes**, truthfully: what the before-state costs.
+- **The ending belongs to the story** (STORY.md § Endings).
 
 ## 7. Topic selection and scoring
 Score each idea 0–5 on ten criteria; the total feeds the existing orchestrator scorer
@@ -147,17 +151,17 @@ platform label. Until the label is available: knowledge videos only on Instagram
 "request a review" (Official wording); (2) decide what to do with v008, which is live on
 Instagram without the label (archive is reversible; or keep and accept the policy risk — owner's
 call); (3) keep v009 unposted on Instagram. TikTok's own rule (commercial content toggle) is separate (PLATFORMS.md).
-**b. Real tools in knowledge videos — a decision for the owner.** Current rules: fictional,
-unbranded UI; no real products (STORY.md, CLAUDE.md). The niche's growth accounts show real tools.
-STORY.md already allows "the tool's real behaviour captured legitimately — decide with the user
-first". Proposal: a *Tested* format — our own account on a real tool, screen captured by us, real
-measured time, no affiliate link, no partner, our type and frame around it. Needs: a rule change,
-a capture scene type, and per-tool terms checks (some tools restrict screenshots/logos in
-marketing — check per tool).
+**b. Real tools — decided (owner, 2026-11-18, D46).** Authorised: authentic screenshots and
+screen recordings of real products when they strengthen the story — our own captures, a demo
+account, fictional data, no credentials or personal data anywhere, the tool's terms checked and
+the capture logged in the asset ledger; claims from the vendor's docs, checked now. Simulated
+interfaces are accurate and labelled "illustrative", never presented as captures, never showing
+a feature the product lacks. The `capture` scene type is built with the first video that needs it.
 **c. Never**: income claims, fake urgency, bought engagement, bait, claims beyond the source.
 
-## 9. Engagement review (proposed Gate 2b, before Gate 2 creative review)
-Answer each in writing in the session report; any "no" → fix or justify.
+## 9. Engagement review (with docs/QA.md § Gate 2c, before rendering)
+Gate 2c (diversity + the owner's eight questions) is binding. These twelve add the engagement
+side; answer them in the storyboard; any "no" → fix or justify.
 1. **Stranger test (muted)**: frames 0–1 s alone — does a stranger know what this is about and
    why it matters to them?
 2. **Open question**: write the question the viewer has at 3 s. Is it answered after ≥ 60 % of
@@ -170,31 +174,31 @@ Answer each in writing in the session report; any "no" → fix or justify.
 8. **Send trigger**: who exactly would a viewer send this to? (No share/tag/comment asks — O12.)
 9. **Ending**: payoff in the last 2 s; brand ≤ ~1.5 s or integrated; CTA specific, not generic.
 10. **Honesty**: hook fully paid off; every number sourced or measured by us; no exaggeration.
-11. **Variety**: arc, hook type and opening visual differ from the last three videos.
+11. **Variety**: covered by Gate 2c (`npm run diversity`, the last five videos).
 12. **Length earns itself**: cut any second without new information (Socialinsider's 30–60 s
     reach peak is correlation, not a target).
 Automatable later (editorial QA): end-card share of runtime, words/s, gap between caption
 changes, arc and hook-type repetition vs earlier specs, banned-phrase repetition ("itself").
 
-## 10. Workflow for every new video (Claude Code)
-1. **Audience + topic research**: who, which pain, why now; check LEARNINGS.md for what we know.
+## 10. Workflow for every new video (Claude Code; the `mwc-video` skill runs it)
+1. **Subject + audience research**: who, which pain, why now; LEARNINGS.md; every fact with a
+   primary source (quote, URL, date). Score the topic (§ 7).
 2. **Creative research**: how others cover it (COMPETITORS.md teardown sheet); the angle nobody
-   took; verify every capability claim on a primary source.
-3. **Three concepts**, substantially different (shape, opening visual, promise); score them (§ 7);
-   pick on potential, not convenience.
-4. **Ten hooks** (HOOKS.md method), score, keep three, choose one; write why it should work and
-   the opening visual that carries it.
-5. **Script**: shape from § 6; withhold the how; stakes; one surprising fact or step; banned
-   words (STORY.md); payoff that answers the hook.
-6. **Storyboard**: per-scene sheet (§ 6) in `docs/storyboards/<id>.md`, mapped to library scenes;
-   new behaviour only as opt-in props.
-7. **Production**: engine workflow (CLAUDE.md § Making a video).
-8. **Review**: Gate 1, Gate 2b (§ 9), Gate 2; real frames.
-9. **Improve** and re-render while a meaningful fix exists.
-10. **Publishing package**: video, cover (3:4-safe headline), caption that answers a search
-    (keyword sentence first, steps, ≤ 5 specific hashtags), CTA, disclosures when applicable,
-    posting time, sources, and a **hypothesis entry** in LEARNINGS.md (what we expect and why).
-Human approval before anything is posted.
+   took.
+3. **What the subject deserves** (one paragraph, before the scene library), then **three
+   genuinely different directions** (§ 6), scored; choose for the subject; `npm run new-video`
+   scaffolds the storyboard and the record; `npm run diversity -- <id>`.
+4. **Ten hooks** (HOOKS.md), scored; top three with their opening visual; the chosen one.
+5. **Opening second by second**, then the **script** (withhold the how, stakes, one surprising
+   fact or step, the ending inside the story).
+6. **Scene sheets**, mapped to engine parts; missing capabilities listed as opt-in proposals.
+7. **Gate 2c answers + hypothesis.** **Stop: the owner approves the concept and storyboard.**
+8. **Production**: spec, voice, stills, `npm run diversity -- <id> --stage render`, make.
+9. **Review**: Gates 1, 2, 2c (on frames), this § 9; improve and re-render while a meaningful fix
+   exists.
+10. **Publishing package**: video, cover (3:4-safe), caption (search sentence first, steps,
+    ≤ 5 specific hashtags), CTA, disclosures, sources, posting time; the hypothesis and the
+    creative record's kinds copied into LEARNINGS.md. Human approval before anything is posted.
 
 ## 11. Publishing details
 - **Cover**: the before-state or the promise in ≤ 5 words, inside the centre 3:4 crop.
@@ -212,6 +216,13 @@ Derived: likes/reach, sends/reach, saves/reach, follows/reach, avg watch ÷ dura
 - **Baseline** = our own median of the last 6 posts (until then: the first 6 posts).
 - **Verdicts**: "worked" only when a metric is outside the range of the comparison posts, on
   ≥ 3 posts per variant; otherwise "inconclusive". Views alone never decide.
+- **Creative variables** recorded with every post (from its creative record): direction,
+  opening kind, hook mechanism, structure, visual metaphor, demonstration, ending, duration,
+  preset. Read them against average watch time (and ÷ duration), sends per reach, saves per
+  reach, follows per reach and skip rate. Do not assume cinematic, fast, short or heavily
+  animated wins: a kind is "better" only when it beats the others on ≥ 3 posts each, outside
+  their range, with the sample size written next to the claim. Under that: "directional".
+  Favour experimenting further with kinds that look promising; never stop exploring new ones.
 - **After every post**: compare to the hypothesis, name the strongest and weakest moment
   (retention drops at which second → which scene), write the lesson in LEARNINGS.md, and update
   this playbook only when a lesson holds on ≥ 3 posts.

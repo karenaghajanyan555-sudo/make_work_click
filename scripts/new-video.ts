@@ -1,31 +1,87 @@
 /**
- * Start a new video from the engine template.
+ * Start a new video. Reuse the engine, not the creative experience (D46): the scaffold has no
+ * story, no scene sequence and no ending — those come from the creative direction chosen in the
+ * storyboard.
  *
- *   npm run new-video -- v003-invoices "Invoices that chase themselves"
+ *   npm run new-video -- v010-slug "Title"
  *
- * Writes content/videos/<id>.ts (a narration-timed spec using library scenes),
- * content/timing/<id>.ts (placeholder until `npm run voice`), and registers the video in
- * content/index.ts. Next: write the script and scenes, `npm run voice -- <id>`, preview in
- * `npm run studio`, then `npm run make -- <id>`. Guide: CLAUDE.md § Making a video.
+ * Writes:
+ *   docs/storyboards/<id>.md      from docs/storyboards/_template.md: three directions, the
+ *                                 comparison with the last five, the opening, the scene sheets,
+ *                                 the creative review (Gate 2c)
+ *   content/creative/<id>.ts      the creative record (status planned), registered in
+ *                                 content/creative/index.ts
+ *   content/videos/<id>.ts        a neutral placeholder spec (one TODO statement scene, so Studio
+ *                                 opens) — replace its scenes with the chosen direction's
+ *   content/timing/<id>.ts        placeholder until `npm run voice`
+ * and registers the video in content/index.ts.
+ *
+ * A full render is refused until `npm run diversity -- <id> --stage render` passes (stills work).
+ * Guide: the mwc-video skill (§ Engine steps).
  */
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { ROOT } from '../src/pipeline/paths.ts';
+import { RECORDS } from '../content/creative/index.ts';
 
 const [id, title = 'Untitled'] = process.argv.slice(2);
 if (!id || !/^v\d{3}-[a-z0-9-]+$/.test(id)) {
-  console.error('Usage: npm run new-video -- v003-slug "Title"   (id: vNNN-lowercase-slug)');
+  console.error('Usage: npm run new-video -- v010-slug "Title"   (id: vNNN-lowercase-slug)');
   process.exit(2);
 }
 const file = path.join(ROOT, 'content', 'videos', `${id}.ts`);
 const lock = path.join(ROOT, 'content', 'timing', `${id}.ts`);
-if (existsSync(file)) {
-  console.error(`${path.relative(ROOT, file)} already exists`);
-  process.exit(1);
+const recordFile = path.join(ROOT, 'content', 'creative', `${id}.ts`);
+const board = path.join(ROOT, 'docs', 'storyboards', `${id}.md`);
+for (const f of [file, recordFile, board]) {
+  if (existsSync(f)) {
+    console.error(`${path.relative(ROOT, f)} already exists`);
+    process.exit(1);
+  }
 }
 const name = id.replace(/^v(\d{3})-(.*)$/, (_, n: string, slug: string) => `v${n}${slug.replace(/(^|-)([a-z0-9])/g, (_m: string, _d: string, c: string) => c.toUpperCase())}`);
 const series = `N° ${id.slice(1, 4)}`;
+const seq = RECORDS.reduce((m, r) => Math.max(m, r.seq), 0) + 1;
 
+// ---- storyboard (the creative work happens here first)
+writeFileSync(board, readFileSync(path.join(ROOT, 'docs', 'storyboards', '_template.md'), 'utf8').replaceAll('{{id}}', id).replaceAll('{{title}}', title).replaceAll('{{series}}', series));
+
+// ---- creative record: nothing decided yet (unknown fails the check until the storyboard fills it)
+writeFileSync(
+  recordFile,
+  `import type { CreativeRecord } from '../../src/creative/diversity.ts';
+
+/**
+ * ${series} — "${title}": creative record (D46). Fill it from docs/storyboards/${id}.md, then
+ * \`npm run diversity -- ${id}\`. Kinds: VOCABULARY in src/creative/diversity.ts. Basis: 'planned'
+ * for decisions made for this video; never 'observed' before it exists.
+ */
+export const record: CreativeRecord = {
+  id: '${id}',
+  seq: ${seq},
+  title: ${JSON.stringify(title)},
+  status: 'planned',
+  subject: { basis: 'unknown', note: 'TODO: the subject in one line' },
+  opening: { basis: 'unknown', note: 'TODO: the opening concept (storyboard § Opening)' },
+  hook: { basis: 'unknown', note: 'TODO: the hook mechanism and line (storyboard § Hooks)' },
+  structure: { basis: 'unknown', note: 'TODO: the narrative structure' },
+  visual: { basis: 'unknown', note: 'TODO: the visual metaphor' },
+  demonstration: { basis: 'unknown', note: 'TODO: how it demonstrates' },
+  ending: { basis: 'unknown', note: 'TODO: how it ends' },
+  intent: { basis: 'unknown', note: 'TODO: why this direction suits the subject' },
+  directions: { basis: 'planned', value: [] },
+  review: { basis: 'planned', value: {} },
+  hypothesis: { basis: 'unknown', note: 'TODO: what we expect from the audience, and why' },
+};
+`,
+);
+const recIndex = path.join(ROOT, 'content', 'creative', 'index.ts');
+let rec = readFileSync(recIndex, 'utf8');
+rec = rec.replace(/((?:import \{ record as \w+ \} from '\.\/[^']+';\n)+)/, `$1import { record as ${name} } from './${id}.ts';\n`);
+rec = rec.replace(/(export const RECORDS: readonly CreativeRecord\[\] = \[)([^\]]*)\]/, (_m, a: string, b: string) => `${a}${b}, ${name}]`);
+writeFileSync(recIndex, rec);
+
+// ---- placeholder spec: one neutral scene so Studio opens; no story, no sequence, no ending
 writeFileSync(
   lock,
   `// Placeholder until \`npm run voice -- ${id}\` writes the real timing lock.\nimport type { TimingLock } from '../../src/video/timing.ts';\n\nexport const timing: TimingLock | undefined = undefined;\n`,
@@ -36,9 +92,9 @@ writeFileSync(
 import { timing } from '../timing/${id}.ts';
 
 /**
- * ${series} — "${title}". Written against the narration (src/video/define.ts): lines follow
- * the take's rhythm, scenes last as long as what they say, beats pin to spoken words.
- * Scene catalogue: docs/ARCHITECTURE.md. Businesses, people and apps are fictional.
+ * ${series} — "${title}". PLACEHOLDER: replace the narration and scenes with the chosen creative
+ * direction (docs/storyboards/${id}.md). Nothing here is a default to keep — not the scene, not
+ * the preset, not the ending. Written against the narration (src/video/define.ts).
  */
 export const ${name} = defineVideo(
   {
@@ -47,36 +103,14 @@ export const ${name} = defineVideo(
     series: '${series}',
     format: 'vertical',
     theme: 'ink',
-    preset: 'editorial',
     status: 'draft',
-    brief: { topic: 'TODO', audience: 'TODO', hook: 'TODO', cta: 'Follow for more systems like this.' },
+    brief: { topic: 'TODO', audience: 'TODO', hook: 'TODO', cta: 'TODO' },
     narration: {
       voice: 'bella-nicole-v1',
-      lines: [
-        { id: 'hook', text: 'TODO: the hook, said out loud in one breath.' },
-        { id: 'turn', text: 'TODO: the turn, where the system takes over.', caption: 'TODO: where the system\\n*takes over.*', pause: 0.3 },
-        { id: 'payoff', text: 'TODO: the payoff, what the viewer gets back.', pause: 0.3 },
-        { id: 'cta', text: 'Follow for more systems like this.', pause: 0.35 },
-      ],
+      lines: [{ id: 'idea', text: 'TODO: the first line, from the storyboard.' }],
     },
-    scenes: [
-      { id: 'hook', type: 'hook', say: ['hook'], props: { headline: 'TODO:\\nthe *hook.*', fragments: [{ text: 'TODO: a to-do', tag: 'Overdue · 2d' }] } },
-      { id: 'turn', type: 'statement', say: ['turn'], props: { text: 'TODO' } },
-      { id: 'payoff', type: 'payoff', say: ['payoff'], props: { statement: 'TODO *payoff.*', items: [{ text: 'TODO: a to-do', resolved: 'Done' }] } },
-      { id: 'end', type: 'endCard', say: ['cta'], lead: 0.75, props: { cta: 'Follow for more *systems* like this.', beats: { click: 0.15, wordmark: 0.35, cta: { line: 'cta', word: 'follow' } } } },
-    ],
-    audio: {
-      compose: {
-        harmony: 'clarity',
-        anchor: 'turn.start',
-        sections: [
-          { at: 'hook.start', style: 'intro' },
-          { at: 'turn.start', style: 'pulse' },
-          { at: 'payoff.start', style: 'hold' },
-          { at: 'end.click', style: 'home' },
-        ],
-      },
-    },
+    scenes: [{ id: 'idea', type: 'statement', say: ['idea'], props: { text: 'TODO: the chosen\\ndirection’s *scenes.*' } }],
+    audio: { compose: { harmony: 'clarity', anchor: 'idea.start', sections: [{ at: 'idea.start', style: 'intro' }] } },
   },
   timing,
 );
@@ -88,5 +122,6 @@ let src = readFileSync(index, 'utf8');
 src = src.replace(/(import \{ \w+ \} from '\.\/videos\/[^']+';\n)(?!import \{ \w+ \} from '\.\/videos)/, `$1import { ${name} } from './videos/${id}.ts';\n`);
 src = src.replace(/(export const VIDEOS: readonly VideoSpec\[\] = \[)([^\]]*)\]/, (_m, a: string, b: string) => `${a}${b}, ${name}]`);
 writeFileSync(index, src);
-console.log(`✓ ${path.relative(ROOT, file)}\n✓ ${path.relative(ROOT, lock)} (placeholder)\n✓ registered in content/index.ts as ${name}`);
-console.log(`Next: write the script + scenes → npm run voice -- ${id} → npm run studio → npm run make -- ${id}`);
+for (const f of [board, recordFile, file, lock]) console.log(`✓ ${path.relative(ROOT, f)}`);
+console.log(`✓ registered in content/index.ts and content/creative/index.ts as ${name}`);
+console.log(`Next: the storyboard (three directions, hooks, scenes, review) → the record → npm run diversity -- ${id} → the spec → npm run voice -- ${id} → stills → npm run make -- ${id}`);

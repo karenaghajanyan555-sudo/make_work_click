@@ -517,3 +517,32 @@ Python 3.12.16 via uv (D13).
   must not carry the paid-booking steps (and the reverse).
 **Facts.** docs/affiliate/systeme-io.md § 12. Deep link `online-courses` (judgement: the viewer's job
   is selling a course; the page states the free course limits).
+
+## D46 — Reuse the engine, not the creative experience (2026-11-18)
+**Context.** The owner: six videos "look like the same video with different words". Measured with
+the new check: every video after v001 shares v001's opening, structure and ending; v009 is 0.87
+similar to v008 (D45 even let the scene type set the story: "flowRun allows a trigger + 3 steps,
+so the hook says three").
+**Decision (owner, binding).**
+- Reuse rendering, components, typography, brand assets, sound, motion, caching, narration.
+  Never reuse by default a story structure, opening, metaphor, scene order, pacing, demonstration,
+  transition pattern or ending (CLAUDE.md first hard rule; STORY.md; QA.md § Gate 2c).
+- Every new video: what the subject deserves → three genuinely different directions → the
+  strongest *for the subject* among those that pass the comparison with the last five (diversity
+  is a gate, suitability decides) → the owner approves concept + storyboard → production.
+- `src/creative/` + `content/creative/` (pure, outside every cache key, never imported by the
+  composition): creative records with provenance (observed / reconstructed / planned / unknown;
+  legacy records never invent decisions), a weighted comparison (core dimensions 83 % of the
+  weight; brand constants never scored), direction checks, a render gate in `scripts/render.ts`
+  (stills, legacy videos, the catalogue and orchestrator productions never gated; a logged
+  override for owner-approved exceptions). `npm run diversity`; `npm run new-video` scaffolds a
+  storyboard + record and no default story. Skill `mwc-video`.
+- Real products: authentic captures only (demo account, fictional data, no credentials, never a
+  simulation presented as a capture); the `capture` scene type is built with the first video
+  that needs it (phase 2).
+**Why the layer is `src/creative`, not `src/orchestrator`:** engine scripts may not import the
+orchestrator (it calls the engine, never the reverse).
+**Judgement, tunable (`RULES`):** FAIL ≥ 0.60 weighted similarity to any of the last five, or the
+previous video's opening/structure/ending repeated; WARN ≥ 0.45.
+**Phases left:** 2 capture tooling (on demand), 3 missing capabilities per approved storyboard,
+4 the orchestrator's storyboard stage runs the check (its two arcs are draft-only until then).

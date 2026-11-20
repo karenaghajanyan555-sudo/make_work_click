@@ -23,8 +23,9 @@ update after every post (PLAYBOOK.md § 12). A lesson moves into PLAYBOOK.md onl
 ```
 ### <id> — <title> (posted YYYY-MM-DD HH:MM, platform)
 Hypothesis: <what we expect and why, e.g. "visual-first opening lowers skip rate vs baseline (H1)">
-Variables: shape · hook category · opening visual · length · ending · proof type
-Hooks considered: <10, scores; chosen + why> (storyboard link)
+Creative variables (from content/creative/<id>.ts): direction · opening kind · hook mechanism ·
+structure · visual metaphor · demonstration · ending · duration · preset
+Hooks considered: <10, scores; chosen + why>; directions considered (storyboard link)
 | Check | 24 h | 72 h | 7 d |
 |---|---|---|---|
 | Views / accounts reached / % non-followers | | | |
@@ -37,6 +38,10 @@ Verdict: worked / did not / inconclusive (why; sample size)
 Strongest moment: … Weakest moment: …
 Change for next video: …
 ```
+
+## Creative variables vs results (fill as posts accumulate; n per kind matters more than the mean)
+| Kind | Posts (n) | Median avg watch ÷ duration | Median sends/reach | Median saves/reach | Median follows/reach | Median skip rate |
+|---|---|---|---|---|---|---|
 
 ## Log
 

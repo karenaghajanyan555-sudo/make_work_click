@@ -23,7 +23,9 @@ made with today's rules (fictional, illustrative UI).
 3. Keep the **top three**, write the opening visual for each, choose one, and write two sentences
    on why it should work (mechanism + who it stops). Record all ten and the scores in the
    storyboard (`docs/storyboards/<id>.md`) so LEARNINGS.md can compare later.
-4. Variety: the chosen hook's category and sentence pattern differ from the last three videos.
+4. Variety: the chosen hook's mechanism and sentence pattern differ from the last three videos;
+   the hook mechanism is one of the weighted dimensions in `npm run diversity` (Gate 2c), and the
+   hook is written for the opening visual of the chosen creative direction, not on its own.
 
 ## Retired for now (overused in v001–v009)
 "X shouldn't depend on Y" (v001, v003) · "X shouldn't take Y" (v008) · "Every X …" (v002, v004,

@@ -28,6 +28,7 @@ npm run make -- <id>      (each step is also its own command; unchanged steps ar
                            every output is written beside its target and renamed when complete)
   voice    take → content/timing/<id>.ts                       scripts/voice.ts
   render   per-scene segments (cached) → <id>.master.mp4       scripts/render.ts, src/pipeline/segments.ts
+           (full renders of videos made after D46: creative gate first, src/creative/gate.ts)
   mix      → public/generated/<id>/mix.wav (+ stems, report)   scripts/mix.ts
   deliver  master + mix → out/<id>/<id>.mp4 (upload file)      scripts/deliver.ts
   qa       ffprobe/loudness/sync/visual checks + review sheets scripts/qa.ts
@@ -62,6 +63,7 @@ already defines.
 | Pipeline | `src/pipeline/` | Node: narration cache, render sessions + segments, build cache, bundled ffmpeg, DSP + mix, delivery, QA, sheets. |
 | Pipeline inputs | `assets/` | Files the pipeline reads but the browser never loads (sound samples). |
 | Publishing | `src/publishing/`, `content/affiliate/` | Affiliate publishing package (pure): fact model with statuses (`model.ts`), Instagram/TikTok rules + FTC facts with sources (`platforms.ts`), partner records + per-platform links (`partner.ts`, data in `content/affiliate/<partner>.ts`; a fact's opt-in `pages` scopes it to the videos whose `spec.affiliate.page` matches, `recordForPage`, D45), the package builder (`package.ts`). Outside every cache key: a re-check never re-renders. `scripts/verify-affiliate.ts` (an orchestrator-side CLI: it reuses `assessClaim`) writes the run; `publish-pack` reads it like a QA report. |
+| Creative | `src/creative/`, `content/creative/` | "Reuse the engine, not the creative experience" (D46). Pure: creative records with provenance (observed / reconstructed / planned / unknown), the weighted comparison with the previous five (`diversity.ts`: brand constants never scored), the direction and review checks, the render gate (`gate.ts`: stills, legacy videos, the catalogue and orchestrator productions are never gated; documented override). One record per video in `content/creative/<id>.ts`. Outside every cache key and never imported by the composition: a record or rule change re-renders nothing. CLI `npm run diversity`. |
 | Orchestrator | `src/orchestrator/` | Production around the engine (docs/ORCHESTRATOR.md): SQLite store (schema 2, `tx`, backups: `npm run db`), 13 stages, runner (lease + heartbeat, recovery), Control Center. Pure parts (writer, arcs, assemble, scoring, kit helpers, research support check, editorial QA, package copy) are unit-tested; it calls the pipeline and scripts, never the reverse. |
 | Story kits, productions | `content/kits/`, `content/productions/` | Category material for the writer; generated specs (do not edit). |
 | CLIs | `scripts/` | Thin entry points over the pipeline. |
@@ -115,6 +117,14 @@ layout block) and a renderer. Beats default from the duration; any beat can be a
 The living catalogue is the `library` video (`content/videos/library.ts`): every type with
 example content and every hand-off. Render its stills to review the whole library.
 `library-affiliate` is the affiliate end card (the same lockup with the "Ad" tag).
+
+### Creative records and the diversity check (`src/creative/`, D46)
+| Part | Use for |
+|---|---|
+| `CreativeRecord` (`content/creative/<id>.ts`) | One video's creative decisions: subject, opening, hook, structure, visual metaphor, demonstration, ending (each a kind from `VOCABULARY` + a description, with its basis), intent, the three directions with suitability scores, the Gate 2c answers, the hypothesis, an optional `plan` (scene/preset/sound facts before the spec exists). Scaffolded by `npm run new-video`. |
+| `evaluate`, `compare`, `report` (`diversity.ts`) | The weighted comparison with the previous five (`DIMENSIONS`, `RULES`), direction checks, provenance checks → `out/<id>/qa/diversity.md`. Spec facts (scene sequence, composition, pacing, motion, sound) come from the spec (`deriveFromSpec`) or the plan. |
+| `gate` (`gate.ts`) | The render gate in `scripts/render.ts` (full renders only). |
+| `VOCABULARY` | Known kinds and families per core dimension. A new creative idea adds a kind here. |
 
 ### Visual presets (`src/brand/presets.ts`, `usePreset()`)
 | Preset | Use | Varies |

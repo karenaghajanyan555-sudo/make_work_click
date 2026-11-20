@@ -1,0 +1,18 @@
+{
+  "name": "mwc-lab-visual-quality",
+  "private": true,
+  "description": "LAB ONLY: isolated experiment dependencies (Phase 3 visual quality). Not used by production. react/react-dom/remotion resolve to the root copies via the lab webpack alias.",
+  "type": "module",
+  "dependencies": {
+    "@react-three/fiber": "9.8.2",
+    "@remotion/effects": "4.0.539",
+    "@remotion/lottie": "4.0.539",
+    "@remotion/mac-cursors": "4.0.539",
+    "@remotion/motion-blur": "4.0.539",
+    "@remotion/noise": "4.0.539",
+    "@remotion/rough-notation": "4.0.539",
+    "@remotion/three": "4.0.539",
+    "lottie-web": "5.13.0",
+    "three": "0.187.0"
+  }
+}

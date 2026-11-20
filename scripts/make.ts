@@ -3,6 +3,8 @@
  *
  *   npm run make -- <videoId> [--force] [--no-qa]
  *   npm run build -- <videoId>          (= make --no-qa)
+ *   npm run make -- <videoId> --creative-override "<reason>"   exceptional: passed to render's
+ *                                       creative gate (D46, docs/QA.md § Gate 2c)
  *
  *   1. voice    take (approved, or cached draft) → timing lock   scripts/voice.ts
  *   2. render   per-scene segments (cached) → picture master      scripts/render.ts
@@ -21,7 +23,9 @@ import { getVideo } from '../content/index.ts';
 import { readManifest } from '../src/pipeline/cache.ts';
 import { videoOut } from '../src/pipeline/paths.ts';
 
-const id = process.argv.slice(2).find((a) => !a.startsWith('--'));
+const overrideAt = process.argv.indexOf('--creative-override');
+const override = overrideAt !== -1 ? ['--creative-override', process.argv[overrideAt + 1] ?? ''] : [];
+const id = process.argv.slice(2).find((a, i, all) => !a.startsWith('--') && all[i - 1] !== '--creative-override');
 if (!id) {
   console.error('Usage: npm run make -- <videoId> [--force] [--no-qa]');
   process.exit(2);
@@ -33,7 +37,7 @@ if (force) rmSync(path.join(videoOut(id), 'segments'), { recursive: true, force:
 
 const steps: Array<[string, string[]]> = [
   ...(spec.narration ? ([['voice', ['scripts/voice.ts', id]]] as Array<[string, string[]]>) : []),
-  ['render', ['scripts/render.ts', id]],
+  ['render', ['scripts/render.ts', id, ...override]],
   ...(hasAudio ? ([['mix', ['scripts/mix.ts', id, ...(force ? ['--force'] : [])]]] as Array<[string, string[]]>) : []),
   ['deliver', ['scripts/deliver.ts', id, ...(force ? ['--force'] : [])]],
   ...(process.argv.includes('--no-qa') ? [] : ([['qa', ['scripts/qa.ts', id, '--no-render']]] as Array<[string, string[]]>)),

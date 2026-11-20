@@ -44,10 +44,10 @@ import type { StoryboardEdit } from './storyboard.ts';
 
 const STOP = new Set(['a', 'an', 'the', 'that', 'your', 'you', 'for', 'of', 'to', 'and', 'with', 'is', 'are', 'it', 'its', 'by', 'on', 'in', 'how', 'why']);
 
-/** Next free vNNN across hand-made videos, productions and jobs; slug from the title. */
+/** Next free vNNN across hand-made videos, productions, creative records (planned videos, D46) and jobs; slug from the title. */
 export function assignVideoId(db: Db, title: string): string {
   const used = new Set<number>();
-  for (const dir of ['content/videos', 'content/productions']) {
+  for (const dir of ['content/videos', 'content/productions', 'content/creative']) {
     const abs = path.join(ROOT, dir);
     if (existsSync(abs)) for (const f of readdirSync(abs)) if (/^v\d{3}-/.test(f)) used.add(Number(f.slice(1, 4)));
   }

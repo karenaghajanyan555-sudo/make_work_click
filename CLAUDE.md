@@ -1,198 +1,129 @@
 # MAKE WORK CLICK — studio rules
 
-A faceless, premium media brand: short vertical videos about AI tools, SaaS, automation
-and productivity, made like a motion-design studio would make them. Pipeline:
-**content spec → Remotion render → automated QA → creative review → human approval.**
-One exceptional video beats ten mediocre ones.
+Faceless, premium short vertical videos about AI tools, SaaS, automation and productivity, made
+like a motion-design studio. Pipeline: **content spec → Remotion render → automated QA → creative
+review → human approval.** One exceptional video beats ten mediocre ones.
+These are hard rules: if a request conflicts with one, say so before acting. Detail lives in the
+docs named in brackets; read them when the task touches that area, not before.
 
-These rules are hard rules. If a request conflicts with one, say so before acting.
-
-## Start of every session
-
-1. Fresh clone: `npm run setup`. Otherwise: `npm run doctor` (must print "Environment ready").
-2. Read `docs/STATUS.md` — current milestone, what the user has approved, the next step.
-   Never redo or silently change approved work.
-3. Read the doc for the area you will touch (map below) before writing code.
+## Start of a session
+- "Continue MAKE WORK CLICK" / resume → skill `mwc-continue` (git check, `docs/SESSION-HANDOFF.md`,
+  verify, load only what the next action needs). New video → skill `mwc-video`.
+- Fresh clone: `npm run setup`. Before the first pipeline run of a session: `npm run doctor`
+  ("Environment ready").
+- Never redo or silently change approved work (handoff; full record in `docs/STATUS.md`).
 
 ## Hard rules
 
-### Quality bar
-- Premium or nothing. Forbidden: placeholder visuals, stock-template looks, emoji,
-  clip-art, gradient blobs, tilted-device-mockup clichés, "AI slideshow" (static images
-  with text), filler motion, karaoke word-by-word captions.
-- Every scene earns its place in the story, has one focal point, and moves with intent.
-- Inspect real rendered frames before presenting anything. If it looks generic, fix it
-  first. Be your own harshest reviewer (`docs/QA.md` creative checklist).
+**Creative (D46, the owner's core principle)** [docs/STORY.md, docs/growth/PLAYBOOK.md, skill `mwc-video`]
+- Reuse the engine (rendering, components, type, brand, sound, motion, caching, narration), never the
+  creative experience (story structure, opening, metaphor, scene order, pacing, demonstration,
+  transitions, ending). Library parts are building blocks; a new topic in an old structure is the same video.
+- Every new video starts in its storyboard (`docs/storyboards/<id>.md`): what the subject deserves,
+  then three genuinely different directions, the strongest chosen *for the subject*; then map it to
+  library parts. A missing capability is a proposed opt-in addition, never a reason to bend the story.
+- A full render needs the creative record (`content/creative/<id>.ts`) passing `npm run diversity --
+  <id> --stage render` and Gate 2c answered [docs/QA.md]. `--creative-override` only with the owner's
+  approval in the session. Stills always work.
+- Frame 0 is already happening: never a headline on black, the narration verbatim on screen, floating
+  text, a logo intro or a slow lead-in. The ending belongs to the story, not a generic logo screen.
+- Records of earlier videos state only what was observed or written then; unknown stays unknown.
 
-### Brand system
-- Use only `src/brand/tokens.ts` (colour, type roles, radii, durations) and the easings in
-  `src/remotion/lib/anim.ts`. No raw colours, font sizes or easing curves in scenes or
-  components. Scene geometry lives in the scene's pure layout block (tested).
-- Signal lime means one thing: "the system did this for you". Coral only marks the
-  "before" state (overdue, forgotten). Rules: `docs/BRAND.md`.
-- Brand content always renders through `VideoComposition` (theme, spec frame, grain).
-- One narrator for every video: `NARRATOR` in `src/brand/voice.ts` (Bella × Nicole, chosen
-  by the user). Never change it without a new audition and the user's pick.
-- Approved takes are **gold**: `public/narration/<id>/take-NN/` is immutable and hash-checked
-  by the tests. Never edit, re-synthesise or delete one. A better take is a new take-NN
-  beside it (`npm run voices`, then `npm run approve-take`), and only with the user's approval.
-  Changing a spoken line means a new take. Another video may reuse an approved take
-  (`take: '<video>/take-NN'`) only with an identical script. Draft takes (cache) are for
-  review; a `final` video needs an approved one.
+**Quality** [docs/QA.md creative checklist]
+- Premium or nothing. Forbidden: placeholder visuals, stock-template looks, emoji, clip-art, gradient
+  blobs, tilted-device mockups, "AI slideshow", filler motion, karaoke word-by-word captions.
+- Every scene earns its place, has one focal point, moves with intent. Inspect real rendered frames
+  before presenting anything; if it looks generic, fix it first.
 
-### Reuse before create (the engine)
-- Before writing a component, check the catalogue in `docs/ARCHITECTURE.md`. Extend an
-  existing primitive or scene type instead of duplicating it. Duplicates are bugs.
-- A new video is a new spec in `content/videos/` (`npm run new-video`), built from library
-  scenes, a visual preset and the shared brand, captions, hand-offs, sound and outro. Never
-  hardcode video content in `src/`; new behaviour goes in as an opt-in prop of a library
-  scene so earlier videos render unchanged.
-- Time from the voice: write lines without `at`, scenes with `say`, beats as spoken words
-  (`{ line, word }`). Hand-typed seconds only where no word fits.
-- A new scene type only when no existing type can tell the story: pure model in
-  `src/video/scenes/`, renderer in `src/remotion/scenes/`, registry entry, catalogue entry,
-  tests. Same for primitives: add to the catalogue.
+**Brand** [docs/BRAND.md, docs/SOUND.md]
+- Only `src/brand/tokens.ts` and the easings in `src/remotion/lib/anim.ts`: no raw colours, font sizes
+  or easing curves. Scene geometry in the scene's tested pure layout block. Render through `VideoComposition`.
+- Signal lime = "the system did this for you". Coral = only the "before" state.
+- One narrator: `NARRATOR` in `src/brand/voice.ts` (Bella × Nicole); change only after an audition + the user's pick.
+- Approved takes `public/narration/<id>/take-NN/` are **gold**: immutable, hash-checked; never edit,
+  re-synthesise or delete. A better take is a new take-NN with the user's approval; a changed line is a
+  new take; reuse (`take: '<video>/take-NN'`) only with an identical script; `final` needs an approved take.
 
-### Determinism and portability
-- Nothing non-deterministic at render time: no `Math.random`, `Date`, network, system
-  fonts. Use Remotion's seeded `random()`. QA re-renders a frame and compares bytes.
-- Every asset is vendored with its licence and logged in the asset ledger
-  (`docs/DECISIONS.md`): `public/` for files the render loads, `assets/` for pipeline-only
-  inputs (sound samples). Commercial use must be allowed; record the source URL.
-- Dependencies: exact pins (`.npmrc save-exact`), versions at least two weeks old, a
-  reason in `docs/DECISIONS.md`. No new dependency without a real need.
-- Media tooling uses the ffmpeg bundled with Remotion (`src/pipeline/ffmpeg.ts`), not a
-  system ffmpeg. It lacks select/overlay/tile/drawtext/afade — read that file's header.
+**Engine** [docs/ARCHITECTURE.md — check its catalogue before writing any component]
+- Extend an existing primitive or scene type; duplicates are bugs. New behaviour = an opt-in prop, so
+  earlier videos render unchanged. No video content in `src/`; a video is a spec in `content/videos/`.
+- Time from the voice: lines without `at`, scenes with `say`, beats as `{ line, word }`; hand-typed
+  seconds only where no word fits.
+- A new scene type only when none can tell the story: model + renderer + registries + catalogue + tests.
 
-### Layout
-- Critical text and UI sit inside the safe zone (`src/brand/format.ts`: 14% top, 35%
-  bottom, 6% sides). Use `useLayout()`; sizes are base units × `u`.
+**Determinism, assets, performance** [docs/DECISIONS.md ledgers, docs/PLATFORMS.md]
+- Nothing non-deterministic at render time (no `Math.random`, `Date`, network, system fonts; seeded
+  `random()`). QA re-renders a frame and compares bytes.
+- Every asset vendored with its licence and source URL in the asset ledger; commercial use allowed.
+  `public/` = files the render loads; `assets/` = pipeline-only inputs (sound samples).
+- Dependencies: exact pins, ≥ 2 weeks old, a reason in the dependency ledger, a real need.
+- ffmpeg is the Remotion-bundled one (`src/pipeline/ffmpeg.ts`: no select/overlay/tile/drawtext/afade).
+- Safe zone `src/brand/format.ts` (14 % top, 35 % bottom, 6 % sides); `useLayout()`, sizes × `u`.
+- Render concurrency 2, ~3 GB free RAM; no full-frame heavy effects (large full-screen blurs,
+  `backdrop-filter`); measure with `npm run profile -- <label> -- <command>`.
 
-### Verification
-- After every change: `npm run check` (typecheck + tests).
-- Before showing a video: `npm run qa -- <id>` must PASS, then review the sheets it writes
-  against the creative checklist in `docs/QA.md`.
-- Never claim something works without running it. Report measured numbers.
-- Separate "verified" from "my judgement". Platform/vendor facts come from
-  `docs/PLATFORMS.md` or a primary source checked now, with the URL.
+**Verification**
+- After every change `npm run check`. Before showing a video `npm run qa -- <id>` PASS, then its sheets
+  against docs/QA.md. Never claim something works without running it; report measured numbers.
+- Label "verified" vs "my judgement". Platform/vendor facts from docs/PLATFORMS.md or a primary source
+  checked now, with the URL.
 
-### Performance
-- Render concurrency 2 (measured best on the reference machine). Expect ~3 GB free RAM.
-  Avoid full-frame heavy effects (large blurs on full-screen layers, `backdrop-filter`).
-  Measure with `npm run profile -- <label> -- <command>`.
+**Process and ethics** [docs/STORY.md § honesty, docs/QA.md § Gate 3, D42–D46]
+- Human approval before anything is published; nothing auto-publishes. Stop at the approval gates.
+- No commit or push unless the user asks in this session.
+- Real products only through authentic captures (our recordings, demo account, fictional data). Never
+  credentials (the owner records logged-in screens), real customer data or personal information on
+  screen, in files or logs. Never invent an interface or feature; a simulated UI is unbranded or
+  labelled "illustrative". Product claims from vendor docs checked now; captures in the asset ledger;
+  capture tooling (scene type `capture`) only when a specific video needs it (D46 phase 2).
+  Everything else shown is fictional and unbranded.
+- Knowledge videos name no partner. Affiliate videos: only an approved partner (`src/brand/partners.ts`)
+  through `spec.affiliate`; its disclosure (end-card "Ad", caption's first line, platform labels) is never
+  dropped or hidden; teach first (partner only on the end card + post copy, link only in the bio); partner claims
+  only from the claim bank, re-checked live; each ships the Gate 3 publishing package (never "tested"
+  without a `npm run verify-affiliate` run).
+- Orchestrator changes follow docs/ORCHESTRATOR.md § Rules for changing the orchestrator.
 
-### Process and ethics
-- Human approval before anything is published. Nothing auto-publishes.
-- Do not commit or push unless the user asks in this session.
-- Stop at the approval gates in `docs/STATUS.md`; show real rendered results.
-- No fake demos of real products, no real brand names or logos in product UI. Businesses,
-  people and apps shown are fictional and unbranded.
-- Most videos are knowledge videos: no partner, no link, no change. Affiliate videos (the
-  owner's decision, 2026-11-17, D42) promote only an approved partner (`src/brand/partners.ts`)
-  and only through `spec.affiliate`, which adds the disclosure (end-card "Ad" tag, caption's
-  first line, platform settings on the post sheet). Never drop or hide it: the TikTok toggle,
-  Instagram's paid partnership label and an in-video disclosure are required (FTC, platform
-  policies: `docs/PLATFORMS.md`). Teach first: the video must be worth watching without the
-  end card; the partner appears only there (and in the post copy); the link only in the bio.
-  Claims about a partner only from its research doc's claim bank, re-checked on the live page.
-- Every affiliate video ships a **publishing package** (docs/QA.md § Gate 3, owner's rule
-  2026-11-18): claims re-verified against official pages, the affiliate URL tested with the ID
-  kept, one tracking link per platform (documented parameters only), commission + payout terms,
-  current Instagram/TikTok commercial and AI disclosure rules, free-plan limits + payment
-  requirements, illustrative vs real interfaces, per-platform captions and bio, an analytics
-  checklist. Every line is labelled Verified / Confirm in your account / Needs configuration /
-  Unverified. Never write that a URL, tracking, setting or integration was tested unless a run
-  tested it (`npm run verify-affiliate` records it). A human must be able to post from it
-  without researching anything again.
-- End every working session by updating `docs/STATUS.md`.
+## Context efficiency
+- Read only what the task needs; never dump whole files unless asked. Large docs (`STATUS.md`,
+  `DECISIONS.md`, storyboards, `docs/affiliate/*`, `docs/research/*`): `grep -n "^## "` first, then
+  read only that range. Do not reread a file you just wrote or edited, or one already read this session
+  unless it changed.
+- Don't repeat or re-explain what the docs already hold; no duplicate docs. Persist decisions where
+  they belong (DECISIONS.md, the storyboard, the creative record, STATUS.md log).
+- Handoff: `docs/SESSION-HANDOFF.md` (≤ 60 lines, verified, replaced not appended) via skill
+  `mwc-handoff`: before ending substantial work, and when the context-watch hook says so (200k soft,
+  350k hard: then finish the atomic step, hand off, stop).
+- Command output: read the summary or tail; the full output only when something fails. Never hide a failure.
+- Images: open each rendered frame once per change; QA sheets first, full frames for what a sheet
+  cannot settle. Efficiency never skips a gate, a frame check or a measurement.
+- A source recorded with its date is not fetched again unless a rule requires a check now.
+- Substantial independent research or audits → one subagent (`mwc-researcher`); no swarms.
+- Code navigation: `grep -n` / targeted reads (and the LSP when installed) over reading whole files.
+
+## Reports
+Result · Changes · Verification · Remaining issues · Next action — short, factual, no repeated summaries.
 
 ## Doc map
-
 | Doc | Read when |
 |---|---|
-| `docs/STATUS.md` | Always, first. Milestones, approvals, next steps. |
-| `docs/ARCHITECTURE.md` | Touching code. Layers, catalogue of reusable parts, how to add a video/scene/theme. |
-| `docs/BRAND.md` | Anything visual. Identity, signature, type, colour, light, motion language. |
-| `docs/STORY.md` | Scripts, scene order, captions, CTA. |
-| `docs/storyboards/<id>.md` | The approved (or proposed) beat plan for one video. |
+| `docs/SESSION-HANDOFF.md` | Resuming: current state, next action. |
+| `docs/STATUS.md` | Full record: milestones, approvals, gates, log (read by section). |
+| `docs/ARCHITECTURE.md` | Touching code: layers, catalogue of reusable parts, how to add a scene/theme. |
+| `docs/COMMANDS.md` | Every npm command with its arguments. |
+| `docs/BRAND.md` | Anything visual: identity, type, colour, light, motion language. |
+| `docs/STORY.md` | Scripts, directions, openings, endings, captions, CTA, honesty. |
+| `docs/storyboards/<id>.md` | One video's creative work (`_template.md`). |
+| `docs/growth/PLAYBOOK.md` | Planning any video; `HOOKS.md`, `LEARNINGS.md`, `COMPETITORS.md`, `AUDIT.md`. |
+| `content/creative/<id>.ts` | A video's creative record (D46); read by `npm run diversity`. |
 | `docs/SOUND.md` | Narration, music, SFX, levels. |
-| `docs/QA.md` | Before presenting any render. |
-| `docs/PLATFORMS.md` | Delivery specs, safe zones, licences (verified, with sources). |
-| `docs/ORCHESTRATOR.md` | The production orchestrator: stages, database, Control Center, kits + arcs. |
-| `docs/DECISIONS.md` | Why things are the way they are; dependency + asset ledger. |
+| `docs/QA.md` | Before presenting any render; Gate 3 for affiliate packages. |
+| `docs/PLATFORMS.md` | Delivery specs, safe zones, licences, platform rules (verified, with sources). |
+| `docs/ORCHESTRATOR.md` | The production orchestrator: stages, database, Control Center, kits + arcs, its rules. |
+| `docs/DECISIONS.md` | Why things are the way they are (D-numbers); dependency + asset ledgers. |
+| `docs/affiliate/<partner>.md` | An affiliate video: claim bank, program, tracking, plan facts. |
+| `docs/research/ANIMATION-SOURCES.md` | Before building an effect, hand-drawn mark, character or 3D. |
+| `docs/optimization/` | Context/token baseline and results; tool decisions. |
 
-## Making a video (the engine workflow)
-
-1. `npm run new-video -- v003-slug "Title"` → spec template + placeholder timing lock,
-   registered in `content/index.ts`.
-2. Write the brief, the script (narration lines, ≤ 7-word caption phrases, `|` to split)
-   and the scenes from the library (`docs/ARCHITECTURE.md` catalogue); pick a preset and a
-   composer plan (`audio.compose`). Storyboard in `npm run studio` (timing is estimated).
-3. `npm run voice -- <id>` → draft take with the narrator (cached by script) + timing lock
-   `content/timing/<id>.ts`. Listen: `out/<id>/voice/draft.m4a`. Tune `pause`s, pin beats
-   to words, re-run (instant when the script is unchanged).
-4. `npm run render -- <id> --stills …` and review real frames; iterate.
-5. `npm run make -- <id>` → render (only changed scene segments), mix, deliver, QA.
-   Review the QA sheets and listen; fix and re-run (unchanged steps are skipped).
-6. With the user: approve the take (`npm run approve-take -- <id> draft`, set
-   `narration.take`, `npm run voice`), add `publish` copy, `npm run publish-pack -- <id>`
-   (affiliate videos: `npm run verify-affiliate -- <id>` first; the pack refuses without it).
-
-## Producing from an idea (the orchestrator)
-
-`npm run control` → http://127.0.0.1:4318: add an idea, Start production, review, approve.
-The runner calls the engine stage by stage (docs/ORCHESTRATOR.md) and stops at the human
-gates; nothing posts. Rules:
-- The orchestrator never re-implements the engine. New production behaviour is a stage or
-  a stage input; new visual behaviour is still an opt-in prop of a library scene.
-- A stage reads only what its `input()` returns (it is hashed). Adding a read anywhere else
-  breaks reuse: add it to the input.
-- Stories come from **story kits** (`content/kits/`) and **arcs** (`src/orchestrator/
-  storyboard.ts`). A new category = a new kit (fictional world, line variants with word
-  pins, scene material, post copy, assumptions, references with exact quotes) + its tests.
-  Never put a fact in a kit line unless it cites a reference research can verify.
-- `content/productions/` and its timing locks are generated: change the idea, script or
-  storyboard in the Control Center and re-run; never edit the file.
-- Approval binds to the upload file's sha256; a failed QA can never be approved. Editorial
-  QA informs, it never approves or blocks.
-- A fact is stated only if research found it **supported** (exact quote + the claim's terms
-  in the passage); partial / unverified / contradicted pause for script review. Word a kit
-  claim to what its source actually says.
-- Every output is written beside its target and renamed into place when complete; approved
-  outputs are copies, never hard links; earlier approved packages are archived, not deleted.
-- Tests use `:memory:` or temp databases (openDb refuses `data/studio.db` under node --test);
-  `npm run test:e2e` runs the whole pipeline in a throwaway copy of the repo.
-
-## Commands
-
-```bash
-npm run setup                         # fresh clone: install, fetch Chrome, verify
-npm run setup:voice                   # narration engine (Kokoro, uv + Python 3.12; optional)
-npm run doctor [-- --render]          # environment check
-npm run check                         # typecheck + unit tests
-npm run studio                        # Remotion Studio (interactive preview)
-npm run new-video -- <id> "Title"     # start a video from the engine template
-npm run voice -- <id>                 # take (approved or cached draft) → timing lock
-npm run make -- <id> [--force]        # voice → render → mix → deliver → QA, skipping what is unchanged
-npm run build -- <id>                 # = make --no-qa
-npm run render -- <id>                # picture master from cached scene segments
-npm run render -- <id> --stills 0,60  # stills (add --debug for safe-zone overlay)
-npm run mix -- <id>                   # final audio → public/generated/<id>/mix.wav + out/<id>/mix/
-npm run deliver -- <id>               # master + mix → upload file
-npm run qa -- <id> [--no-render]      # QA gate (builds first unless --no-render) → out/<id>/qa/
-npm run publish-pack -- <id>          # cover + post sheet → out/<id>/publish/ (posts nothing)
-npm run verify-affiliate -- <id>      # affiliate videos, before publish-pack: claims, facts, link tests → verification.json
-npm run voices -- <id>                # narrator audition → out/<id>/voices/
-npm run approve-take -- <id> <label>  # freeze an audition take (or `draft`) → public/narration/<id>/take-NN/
-npm run profile -- <label> -- <cmd>   # wall time + peak memory of any command (Linux)
-npm run control [-- --port 4318]      # Production Control Center (dashboard + runner)
-npm run produce -- idea add|list|discover|set …   # idea registry
-npm run produce -- start <ideaId> [--run] [--review-script] [--fail-once <stage>]
-npm run produce -- run [<jobId>] | status [<jobId>] | resume|retry|rerun|cancel <jobId>
-npm run produce -- stage <jobId> <stage> [--force]  # one stage, upstream outputs kept
-npm run produce -- approve|revise|reject <jobId> [--notes N] [--script]
-npm run produce -- edit-line <jobId> <lineId> --text T [--caption C] [--pause S]
-npm run produce -- batch <ideaId>… [--run] | publish <jobId> … | metrics <pubId> … | insights
-npm run db -- backup [file] | list | check | restore <file>   # production database (restore: stop the Control Center first)
-npm run test:e2e [-- --keep]          # full pipeline in a throwaway repo copy (~10 min, one real render)
-```
+Core commands: `npm run check` · `doctor` · `studio` · `new-video -- <id> "Title"` · `voice -- <id>` ·
+`render -- <id> --stills 0,60` · `diversity -- <id> [--stage render]` · `make -- <id>` · `qa -- <id>`.

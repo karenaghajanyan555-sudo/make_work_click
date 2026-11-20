@@ -28,6 +28,14 @@ are physical (cards flip, windows build), never a light surface fading over the 
    (`**remember**`).
 4. **One accent** — signal lime `#C9F25D`, which only ever means "the system did this".
 
+## Constant identity, changing experience (D46)
+**Always the same** (identity, never counted as repetition): palette and colour meaning, type
+roles, the narrator, the spec frame, grain and key light, the switch and wordmark.
+**Never the same by default** (decided per video, compared with the last five by `npm run
+diversity`): the opening concept, the visual metaphor, the demonstration method, the scene
+order, pacing, transitions, sound design and the ending. The click is the brand's signature,
+not every video's climax: use it where the story turns on "the system did it".
+
 ## Colour
 - Ink, graphite, paper, fog, smoke — neutrals (tokens in `src/brand/tokens.ts`).
 - Signal lime: automated states (Sent, Live, ripples, connector fill, light after the click,
@@ -104,6 +112,6 @@ fonts, signal meaning, spec frame, grain and easing curves are identical in all 
 Hand-offs that move light UI never cross-fade it over the dark ground (push, wipe, cut).
 
 ## Never
-Emoji · stock photos · clip-art · fake real-product UIs or logos · rainbow gradients ·
+Emoji · stock photos · clip-art · fake real-product UIs, or simulations passed off as captures (real products appear only as authentic captures inside our frame, or as labelled illustrations; logos only as they appear inside a capture, never as decoration — D46) · rainbow gradients ·
 glassmorphism blur panels · tilted phone/laptop mockups · bouncy springs · typewriter text ·
 word-by-word karaoke captions · more than one accent colour.

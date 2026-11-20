@@ -1,6 +1,6 @@
 # QA — acceptance gates
 
-A video is only shown to the user when **both** gates pass.
+A video is only shown to the user when Gates 1, 2 and 2c pass (Gate 2c is checked before rendering too).
 
 ## Gate 1 — automated (`npm run qa -- <id>`)
 Builds the video first (`npm run build`: render → mix → deliver) unless `--no-render`, then
@@ -71,15 +71,61 @@ Answer each in writing in the session report; any "no" means fix and re-run.
    `video.colour` must pass (BT.709 tagged) on new renders.
 7. **Continuity:** Light, colour meaning (lime = system, coral = before) and spec frame
    consistent across scenes; chapter labels match the story.
-8. **Generic check:** Would this frame be mistaken for a stock template or another brand?
-   Is any scene repetitive? If yes, redesign it.
+8. **Generic check:** Would this frame be mistaken for a stock template, another brand — or one
+   of our own earlier videos? Is any scene repetitive? If yes, redesign it (Gate 2c).
 9. **Sound:** narration intelligible over music on phone speakers; click audible; every
    effect lands on its visual (stems in `out/<id>/mix/stems/` help); levels within
    `docs/SOUND.md` targets.
-10. **Honesty:** Fictional, unbranded UI; no links. Knowledge videos name no partner
-    (validation). Affiliate videos (D42, docs/STORY.md § Affiliate videos): the "Ad" tag is
-    readable on the last frames at phone size; covering the end card, the video still teaches
-    something complete; every partner fact matches its claim bank and the live page today.
+10. **Honesty:** Fictional, unbranded UI — or an authentic capture of a real product (demo
+    account, fictional data, no credentials or personal data visible), or an accurate simulation
+    labelled "illustrative"; never a simulation passed off as a capture (D46). No links in the
+    video. Knowledge videos name no partner (validation). Affiliate videos (D42, docs/STORY.md §
+    Affiliate videos): the "Ad" tag is readable on the last frames at phone size; covering the
+    end card, the video still teaches something complete; every partner fact matches its claim
+    bank and the live page today.
+
+## Gate 2c — creative diversity (D46; before rendering, re-checked on the frames)
+**Reuse the engine, not the creative experience.** For every video made after D46.
+
+Before a full render (stills are fine before it):
+1. The storyboard (`docs/storyboards/<id>.md`) holds three genuinely different directions,
+   scored for suitability, the chosen one and why, the hooks, the opening second by second and
+   the scene sheets; the creative record (`content/creative/<id>.ts`) mirrors it.
+2. `npm run diversity -- <id> --stage render` passes → `out/<id>/qa/diversity.md`. It compares
+   the video with the previous five, weighted: opening concept 3, narrative structure 3, hook
+   mechanism, visual metaphor, demonstration method and ending 2.5 each; scene sequence 1;
+   composition, pacing, animation language, sound 0.5 each. Brand constants (palette,
+   typography, narrator, spec frame, grain, the mark) are never scored. FAIL: weighted
+   similarity ≥ 0.60 to any of the five; the previous video's opening, structure or ending
+   kind repeated; fewer than three directions or two of them alike (differ in < 2 of opening,
+   structure, metaphor, demonstration); a stronger passing direction not chosen without a
+   written reason; the review or the hypothesis missing. WARN: similarity ≥ 0.45; a core kind
+   used by ≥ 3 of the last five; an unknown kind; thin data. Thresholds: `RULES` in
+   `src/creative/diversity.ts` (a judgement, D46).
+3. The owner approved the concept and storyboard, recorded as `approved: { date, note }` in the
+   creative record (the check fails at the render stage without it).
+4. The creative review, answered in the storyboard and the record — weak answers mean revise
+   before rendering:
+   1. What makes this video visually different from our last five videos?
+   2. What makes its opening different?
+   3. Why is this the right storytelling structure for this subject?
+   4. What is the strongest moment?
+   5. What will viewers learn?
+   6. What would make someone share or save it?
+   7. Is any scene unnecessary?
+   8. Is the ending integrated into the story rather than another generic logo screen?
+After the render: re-answer 1, 2, 4, 7 and 8 from the QA sheets and full-resolution stills.
+
+**The render gate.** `npm run render` (and so `make`) refuses a full render of a video made
+after D46 until point 2 passes. Never gated: stills, Studio, voice, mix, deliver, QA, publish-pack
+— and nothing made before D46 (legacy records, the catalogue, orchestrator productions until
+D46 phase 4). A resumed or recovered build asks again and gets the same answer; the gate writes
+nothing but its own log.
+**Override (exceptional).** Only with the owner's approval in the session, for a reason such as
+a technical test or a deliberate, documented exception:
+`npm run make -- <id> --creative-override "<reason, ≥ 10 characters>"` (or
+`MWC_CREATIVE_OVERRIDE="<reason>"`). The render proceeds, prints the failed checks and appends
+`{at, reason, verdict}` to `out/<id>/qa/creative-override.jsonl`. Record it in STATUS.md.
 
 ## Gate 3 — the affiliate publishing package (owner's rule, 2026-11-18; D44)
 Every affiliate video. `npm run verify-affiliate -- <id>` then `npm run publish-pack -- <id>`;

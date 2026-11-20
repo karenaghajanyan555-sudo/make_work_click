@@ -23,6 +23,31 @@ IDEA → RESEARCH → BRIEF → SCRIPT → STORYBOARD → VOICE → ASSETS → S
 - **Humans decide.** Nothing posts. A failed QA can never be approved. Approval binds to
   the exact upload file (sha256): a re-render needs a new approval.
 
+### Rules for changing the orchestrator (moved from CLAUDE.md, 2026-11-18)
+- Use: `npm run control` → http://127.0.0.1:4318 (add an idea, Start production, review,
+  approve); the runner stops at the human gates; nothing posts.
+- The orchestrator never re-implements the engine. New production behaviour is a stage or a
+  stage input; new visual behaviour is still an opt-in prop of a library scene.
+- A stage reads only what its `input()` returns (it is hashed). Adding a read anywhere else
+  breaks reuse: add it to the input.
+- The two arcs (`signature`, `editorial`) repeat one creative experience: until the
+  orchestrator runs the diversity check in its storyboard stage (D46 phase 4), new videos are
+  made through the engine workflow (skill `mwc-video`); kits + arcs are for drafts and tests.
+- Stories come from **story kits** (`content/kits/`) and **arcs** (`src/orchestrator/
+  storyboard.ts`). A new category = a new kit (fictional world, line variants with word pins,
+  scene material, post copy, assumptions, references with exact quotes) + its tests. Never put
+  a fact in a kit line unless it cites a reference research can verify.
+- `content/productions/` and its timing locks are generated: change the idea, script or
+  storyboard in the Control Center and re-run; never edit the file.
+- Editorial QA informs, it never approves or blocks.
+- A fact is stated only if research found it **supported** (exact quote + the claim's terms in
+  the passage); partial / unverified / contradicted pause for script review. Word a kit claim
+  to what its source actually says.
+- Every output is written beside its target and renamed into place when complete; approved
+  outputs are copies, never hard links; earlier approved packages are archived, not deleted.
+- Tests use `:memory:` or temp databases (openDb refuses `data/studio.db` under node --test);
+  `npm run test:e2e` runs the whole pipeline in a throwaway copy of the repo.
+
 ## Stages
 | Stage | Input (hashed) | Output / records | Calls |
 |---|---|---|---|

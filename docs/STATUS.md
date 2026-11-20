@@ -70,7 +70,20 @@ unapproved narrator.
 | `v009-sale-does-the-rest` — second systeme.io video: the after-sale workflow for a course (D45) | **QA 29/29 PASS; verification 12/12 claims, 62/62 facts, links pass; package built — awaiting the owner's watch-through and approval** (draft take). Posting kit: https://claude.ai/code/artifact/162aed8f-91f8-41af-969d-85b0a96df947 |
 
 ## Next step
-**Growth audit (2026-11-18) — awaiting the owner's approval of the plan.** Knowledge base in
+**v010 (D46) — E2 "The other half" chosen; concept + storytelling approved 2026-11-18 (recorded as
+`approved` in `content/creative/v010-the-23-minute-number.ts`). Waiting: the owner's approval of the
+visual look test.** Storyboard `docs/storyboards/v010-the-23-minute-number.md` § 11 (E2), § 12 (look
+test), § 13 (engineering). Look test: `out/v010-the-23-minute-number/look/` (9 stills + 2 clips),
+built by `node lab/paper-look/render.ts` from `lab/paper-look/` (prototype, outside every cache key).
+Review page (phone): https://claude.ai/code/artifact/0fe241e3-f43f-40d3-a090-ceb70ffef97a
+Owner's conditions: no unnecessary global cache invalidation; preserve published files and caches;
+the good→bad turn must be a memorable visual + audio event; the note useful and screenshot-worthy.
+Next, in order, only after the visual approval: (1) scoped cache keys + carry-over with byte proof
+(§ 13; v009 is the only valid cache today); (2) the `paper` scene type from the lab code (model,
+renderer, registries, tests, catalogue); (3) paper sounds + silence windows (scoped mix keys);
+(4) spec, voice, stills review, Stage B of skill `mwc-video`. Not generated: no spec, voice, full render.
+
+**Growth audit (2026-11-18) — Phase 1 of D46 done; P0 owner items still open.** Knowledge base in
 `docs/growth/` (AUDIT, PLAYBOOK, HOOKS, COMPETITORS, LEARNINGS). Read PLAYBOOK.md before planning
 any video. Nothing in CLAUDE.md, STORY.md, QA.md or code changed yet. Plan, in order:
 - P0 owner, now: (1) **affiliate on Instagram is on hold** — Meta requires the paid partnership
@@ -145,6 +158,113 @@ the user asks for a commit.
 Then step 6: approval store (SQLite, D4) recording approvals and post URLs.
 
 ## Log
+### 2026-11-19 — Phase 3 part 3: E3/E5/E6 rendered + reviewed; E4, E7 built (no production code change)
+- The handoff's "queued" E3/E5/E6 render had never run; ran it (799 s, peak 1,949 MB PSS). Results
+  in `docs/quality/EXPERIMENT-RESULTS.md` § E3/E5/E6: SVG velocity blur (+11 %), CSS comet trail,
+  E5 cursor demo (132 ms/f) and CSS 3D (281 vs three.js 430) are candidates; `lensBlur` (3,452
+  ms/f) and `lightTrail` rejected; `HtmlInCanvasMotionBlur` fails in Chrome 157 headless (M).
+- Fixed in the lab: rack-focus composition (opening subject was off frame), E5 pointer rest spot.
+- E4 built (geometric character, three zero-dependency lip-sync tracks + metrics), E7 built
+  (5 procedural A/B sound pairs); `render.ts` samples per-composition peak memory (`--mem`).
+- `npm run check` 160/160 pass. Gallery + roadmap not started.
+
+### 2026-11-19 — Phase 3 part 2: E2 re-tune + cheaper routes; E3/E5/E6 built (no production code change)
+- E2R measured (11 lab compositions, all byte-identical): baked paper plate 183 ms/frame vs live
+  chain 1,712; tear 2,199 live → 1,075 on a baked `<Img>` → 979 selective → 254 pre-rendered PNG
+  sequence → **241 pure DOM clip-path tear** (finer seam than `tear()`). Peak 1,650 MB PSS.
+  `docs/quality/EXPERIMENT-RESULTS.md` § E2R.
+- Lab only: `exp/E2b-retune.tsx`, `E3-cinematic.tsx`, `E5-demo.tsx`, `E6-3d.tsx`, `e4-prep.ts`
+  (+ generated `exp/E4-data.ts`), plate rendering + lab public dir in `render.ts`. v008 take-01
+  read only (sha256 unchanged). Running the downloaded Rhubarb binary was blocked (owner decision).
+### 2026-11-19 — Phase 3 visual quality: audit, research, lab E1–E2 (no production code change)
+- Owner brief: audit quality, verify animation APIs at our pins, prove techniques in isolated
+  experiments, then rank P0–P3; approval before anything enters the engine.
+- Done: `docs/quality/VISUAL-AUDIT.md` (12 ranked issues), `docs/quality/ANIMATION-RESEARCH.md`
+  (exact 4.0.539 APIs + licences), `lab/visual-quality/` (isolated deps, entry, render/det/profile
+  script), E1 typography + E2 materials rendered → `docs/quality/EXPERIMENT-RESULTS.md`.
+- Key facts (measured): effects deterministic under swangle; `pageTurn`/`cylinder`/`sphere` need
+  WebGPU (fail); `magnify` + 8 more not in 4.0.539; effect chains 1.0–2.0 s/frame vs DOM ~0.2;
+  peak 1,521 MB at concurrency 1. `@remotion/mac-cursors` = Apple artwork (do not use).
+- Open: E3–E7, gallery, `IMPLEMENTATION-ROADMAP.md` (see SESSION-HANDOFF).
+### 2026-11-18 — context + token optimization (no production code change)
+- Owner asked for minimal startup context, on-demand knowledge, reliable fresh-session recovery.
+- Done: compact CLAUDE.md (19,787 → 9,650 bytes; every hard rule kept, procedures moved to the
+  `mwc-video` skill, `docs/ORCHESTRATOR.md`, `docs/COMMANDS.md`); `docs/SESSION-HANDOFF.md` (the
+  startup read); skill `mwc-continue` ("Continue MAKE WORK CLICK"); SessionStart hook + skill
+  listing overrides in `.claude/settings.json`; agent `mwc-researcher`.
+- Measured: fresh-session startup 42,508 → 38,162 tokens (−10.2 %); connectors cost a further
+  4,551 tokens per session and were never called in 13 sessions. Recovery test passed (31 s,
+  right next action). `npm run check` 160/160. Details: `docs/optimization/` (BASELINE, RESULTS).
+- 2026-11-19, owner-approved: claude.ai connectors off (project), TypeScript LSP plugin + server 6.0.3
+  installed (project) and working; long-session handoff: hook `context-watch.mjs` (200k soft / 350k
+  hard) + skill `mwc-handoff`, fired live at 377k. Startup now 38,290 tokens. ast-grep deferred;
+  Concise style, Obsidian, Context7 declined. 160/160 tests.
+
+### 2026-11-18 — v010 E2 look test + cache investigation (no production code change)
+- Owner: E2 "The other half" chosen; concept + storytelling approved (record `approved`); visual
+  execution to be approved on a look test before the production scene type; no unnecessary global
+  cache invalidation; preserve published files and caches.
+- Built: `lab/paper-look/` (own Remotion entry: torn-paper geometry, paper texture + light, shadows,
+  perforated slip, four shots + the turn) → `out/v010-the-23-minute-number/look/` (9 stills, 2 clips:
+  stills 2–6 s, clips 30 s / 86 s, peak 0.66 GB). Iterated on real frames (hair-like fibres, tears
+  cutting "23" and the comma, grey paper, flat 5/5 page, perforation holes filled, tear rotating the
+  wrong way, page under the caption band — all fixed).
+- Verified: RENDER_INPUTS / MIX_INPUTS hashes, every upload/master/published sha and build key
+  identical to the phase-1 baseline; v009 still 3/3 segments + current mix. Tests 160/160 (two v010
+  tests rewritten to test approval on a copy, not the live record). Diversity v010 at render stage:
+  PASS. Lab typechecks (`lab/paper-look/tsconfig.json`).
+- Investigated: why adding a scene type re-keys every video (directory-wide keys + shared registry
+  files) and a plan to avoid it (storyboard § 13). Not implemented: waits for the visual approval.
+
+### 2026-11-18 — animation sources research (no code change)
+- Researched reusable animation sources instead of building them: Remotion first-party packages,
+  character/human tooling, libraries to read for ideas. Saved: `docs/research/ANIMATION-SOURCES.md`
+  (verified vs judgement labelled, sources, open questions).
+- Key finding: `@remotion/effects` (available at our pinned 4.0.539) has `paper()`, `tear()`,
+  `pageTurn()`, `roughenEdges()`: candidates for v010 E2 / `lab/paper-look/`. Not measured yet
+  (determinism under swangle, render cost). Nothing installed.
+- Characters: free path = Open Peeps / Humaaans (CC0) + Rhubarb Lip Sync (MIT); Rive needs a paid
+  seat to drop its splash (owner decision).
+
+### 2026-11-18 — v010 round 2: three executions of Direction A (no code change)
+- Owner: Direction A (investigative paper trail) approved; asked for an out-of-the-box execution
+  ("make the viewer curious before they understand the subject"), three radically different
+  executions, scored, the strongest chosen (not the easiest to render). No spec/voice/render yet.
+- Done: storyboard § 11 (first frame, 0–3 s, narration, on-screen text, scene-by-scene visual,
+  camera, sound, durations, payoff, scores, trade-offs, engine cost, risks); record `notes`.
+- Verified today: the "refocus" phrasing circulates (F7, three headlines); the full Q&A answer
+  verbatim (F8). Measured: narrator speaking rate 2.2–2.7 words/s (2.41 overall, six timing locks)
+  → scripts trimmed to 87–97 words, ~41–43 s.
+- Checked: the e2e run (30/30) predates the `assignVideoId` fix (its job was still numbered v010);
+  the fix verified directly: next orchestrator id `v011-invoices-chase-themselves`.
+
+### 2026-11-18 — D46 phase 1: reuse the engine, not the creative experience
+- Owner: approved phase 1 with five changes (weighted scoring without brand constants; three
+  genuinely different directions, chosen for the subject; honest legacy records; a gate that breaks
+  nothing, with an override; real captures only with demo accounts and fictional data). Phase 2
+  (capture tooling) waits for a video that needs it.
+- Built: `src/creative/diversity.ts` + `gate.ts` (pure), `content/creative/` (6 legacy records +
+  v010 planned), `scripts/diversity.ts` (`npm run diversity`), the gate in `scripts/render.ts`
+  (+ `--creative-override` forwarded by `make`), `scripts/new-video.ts` (storyboard + record +
+  neutral placeholder, no default story), `docs/storyboards/_template.md`, skill
+  `.claude/skills/mwc-video/SKILL.md`; rules in CLAUDE.md, STORY.md, QA.md (Gate 2c), BRAND.md,
+  ARCHITECTURE.md, PLAYBOOK.md, LEARNINGS.md, HOOKS.md; D46.
+- Measured: tests 160/160 (11 new in `tests/diversity.test.ts`). RENDER_INPUTS / MIX_INPUTS hashes,
+  every upload/master sha256 and every build key identical before and after (39/39). Legacy
+  history: v002 0.65 vs v001-v2, v003 0.96 max, v004 0.82, v008 0.81, v009 0.87 vs v008 — all would
+  FAIL today. v010 PASS (0.04–0.07).
+- Live checks (throwaway `v998`, removed, registries restored byte-for-byte): scaffold typechecks;
+  full render refused (exit 3) with 9 reasons; a 4-character override refused; stills render
+  (5.3 s); an override render ran and logged to `creative-override.jsonl`.
+- Skill: a headless `claude -p` session lists `mwc-video` in its slash commands, names it unprompted
+  for "planning a new MAKE WORK CLICK video", and `/mwc-video` loads its Stage A (10 steps).
+- Found, not caused here: the segment caches of v001–v008 are already stale for the current render
+  code (v009 3/3 cached); a rebuild of those videos would re-render. Not rebuilt.
+- End to end (`npm run test:e2e`, throwaway copy, the orchestrator renders through the gated
+  `scripts/render.ts`): **30/30 PASS** in 780.6 s. It showed the orchestrator would give its next
+  job the number v010 (it did not look at creative records) → `assignVideoId` now also scans
+  `content/creative/` (next orchestrator id: v011). Tests 160/160 after the fix.
+- Not done: phases 2–4; v010 production (awaiting approval).
 ### 2026-11-18 — growth audit and knowledge base (no code change)
 - Owner: turn the studio into a research-driven engagement engine; audit first, then a plan for
   approval. Environment ready (`npm run doctor`).

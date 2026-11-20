@@ -14,6 +14,7 @@
     "studio": "remotion studio",
     "render": "node scripts/render.ts",
     "qa": "node scripts/qa.ts",
+    "diversity": "node scripts/diversity.ts",
     "profile": "node scripts/profile-render.ts",
     "voices": "node scripts/voices.ts",
     "voice": "node scripts/voice.ts",
